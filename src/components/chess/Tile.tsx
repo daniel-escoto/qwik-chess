@@ -2,7 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { Tile } from "~/models/Tile";
 import Piece from "./Piece";
 
-function getTileColor(tile: Tile) {
+export function getTileColor(tile: Tile) {
   return tile.color === "white" ? "bg-white" : "bg-black";
 }
 

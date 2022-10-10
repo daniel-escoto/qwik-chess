@@ -13,7 +13,7 @@ import WhiteQueen from "../../../public/pieces/WhiteQueen.svg";
 import WhiteRook from "../../../public/pieces/WhiteRook.svg";
 import { Piece, PieceType } from "../../models/Piece";
 
-function getPieceImage(piece: Piece) {
+export function getPieceImage(piece: Piece) {
   switch (piece.type) {
     case PieceType.Pawn:
       return piece.color === "white" ? WhitePawn : BlackPawn;
