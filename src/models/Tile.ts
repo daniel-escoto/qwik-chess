@@ -1,8 +1,8 @@
 import { Piece } from "./Piece";
 
 export type Position = {
-  x: number;
-  y: number;
+  row: number;
+  column: string; // a-h
 };
 
 export type Tile = {

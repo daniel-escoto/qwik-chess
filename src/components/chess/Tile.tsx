@@ -3,7 +3,7 @@ import { Tile } from "~/models/Tile";
 import Piece from "./Piece";
 
 export function getTileColor(tile: Tile) {
-  return tile.color === "white" ? "bg-white" : "bg-black";
+  return tile.color === "white" ? "bg-white" : "bg-green-500";
 }
 
 export default component$((tile: Tile) => {
