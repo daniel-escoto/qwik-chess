@@ -14,7 +14,7 @@ export function getTileColor(tile: Tile) {
 export default component$(({ tile, onClick$ }: Props) => {
   return (
     <div
-      className={`w-12 h-12 relative ${getTileColor(tile)}`}
+      className={`w-12 h-12 m-0 p-0 relative ${getTileColor(tile)}`}
       onClick$={() => onClick$(tile)}
     >
       {tile.piece && <Piece color={tile.piece.color} type={tile.piece.type} />}

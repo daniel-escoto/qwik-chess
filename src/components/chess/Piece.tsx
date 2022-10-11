@@ -31,5 +31,10 @@ export function getPieceImage(piece: Piece) {
 }
 
 export default component$((piece: Piece) => {
-  return <img src={getPieceImage(piece)} className="absolute inset-0" />;
+  return (
+    <img
+      src={getPieceImage(piece)}
+      className="absolute inset-0 w-full h-full"
+    />
+  );
 });

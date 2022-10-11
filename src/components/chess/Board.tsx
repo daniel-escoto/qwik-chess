@@ -16,6 +16,24 @@ export function RowLabel({ row }: { row: number }) {
   );
 }
 
+// row labels
+// from top to bottom
+// 8 7 6 5 4 3 2 1
+export function RowLabels() {
+  return (
+    <div className="flex flex-col">
+      <RowLabel row={7} />
+      <RowLabel row={6} />
+      <RowLabel row={5} />
+      <RowLabel row={4} />
+      <RowLabel row={3} />
+      <RowLabel row={2} />
+      <RowLabel row={1} />
+      <RowLabel row={0} />
+    </div>
+  );
+}
+
 export function ColumnLabels() {
   return (
     <div className="grid grid-cols-9  w-96 h-96 gap-0">
@@ -30,20 +48,22 @@ export function ColumnLabels() {
 }
 
 export default component$(({ board, handleTileClick$ }: Props) => {
+  //   return (
+  //     <div className="grid grid-cols-8 gap-0 w-96 h-96">
+  //       {board.tiles.map((tile) => (
+  //         <Tile tile={tile} onClick$={handleTileClick$} />
+  //       ))}
+  //     </div>
+  //   );
+
   return (
-    <div className="grid grid-cols-9 w-96 h-96 gap-0">
-      {board.tiles.map((tile, index) => {
-        if (index % 8 === 0) {
-          return (
-            <>
-              <RowLabel row={8 - Math.floor(index / 8) - 1} />
-              <Tile tile={tile} onClick$={handleTileClick$} />
-            </>
-          );
-        }
-        return <Tile tile={tile} onClick$={handleTileClick$} />;
-      })}
-      <ColumnLabels />
+    <div className="flex items-center">
+      <RowLabels />
+      <div className="grid grid-cols-8 gap-0 w-96 h-96">
+        {board.tiles.map((tile) => (
+          <Tile tile={tile} onClick$={handleTileClick$} />
+        ))}
+      </div>
     </div>
   );
 });
