@@ -8,7 +8,7 @@ export function getTileColor(tile: Tile) {
 
 export default component$((tile: Tile) => {
   return (
-    <div className={`w-12 h-12 ${getTileColor(tile)}`}>
+    <div className={`w-12 h-12 relative ${getTileColor(tile)}`}>
       {tile.piece && <Piece color={tile.piece.color} type={tile.piece.type} />}
     </div>
   );

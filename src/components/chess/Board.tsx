@@ -4,11 +4,19 @@ import { Tile as TileModel } from "~/models/Tile";
 import Tile from "./Tile";
 
 export default component$((board: Board) => {
-  // board tiles are one dimensional array
+  const tiles = board.tiles.sort((a, b) => {
+    if (a.position.y === b.position.y) {
+      return a.position.x - b.position.x;
+    }
+    return a.position.y - b.position.y;
+  });
+
   return (
-    <div className="grid grid-cols-8">
-      {board.tiles.map((tile: TileModel, index: number) => (
-        <Tile key={index} {...tile} />
+    // have tiles right next to each other
+    // 8 x 8 grid
+    <div className="w-96 h-96 grid grid-cols-8 gap-0">
+      {tiles.map((tile) => (
+        <Tile {...tile} />
       ))}
     </div>
   );
