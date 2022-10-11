@@ -1,21 +1,41 @@
-import { component$, useStore } from "@builder.io/qwik";
+import { $, component$, useStore } from "@builder.io/qwik";
 import Board from "./Board";
 import { Board as BoardModel } from "~/models/Board";
-import { getStartingBoard } from "~/Util/Board";
-import { Piece } from "~/models/Piece";
+import { getStartingBoard, getValidMove } from "~/Util/Board";
+import { Tile } from "~/models/Tile";
 
-export default component$(function () {
+export default component$(() => {
   const state = useStore<{
     board: BoardModel;
-    selectedPiece: Piece | null;
+    selectedTile: Tile | null;
   }>({
     board: getStartingBoard(),
-    selectedPiece: null,
+    selectedTile: null,
+  });
+
+  const handleTileClick$ = $((tile: Tile) => {
+    const board = state.board;
+    const selectedTile = state.selectedTile;
+    if (selectedTile) {
+      const newBoard = getValidMove(
+        board,
+        selectedTile.position,
+        tile.position
+      );
+      if (newBoard) {
+        state.board = newBoard;
+        state.selectedTile = null;
+      } else {
+        state.selectedTile = tile;
+      }
+    } else {
+      state.selectedTile = tile;
+    }
   });
 
   return (
     <div className="flex justify-center mt-12 h-screen">
-      <Board {...state.board} />
+      <Board board={state.board} handleTileClick$={handleTileClick$} />
     </div>
   );
 });

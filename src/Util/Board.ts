@@ -1,4 +1,4 @@
-import { Tile } from "~/models/Tile";
+import { Position, Tile } from "~/models/Tile";
 import { Piece, PieceType } from "~/models/Piece";
 import { Board } from "~/models/Board";
 import { getPieceMoves } from "./Piece";
@@ -184,4 +184,57 @@ export const makeMove = (board: Board, move: string): Board => {
     fromTile.piece = null;
   }
   return newBoard;
+};
+
+// given a board, a beginning tile position, and an ending tile position,
+// return a board if the move is valid, otherwise return null
+export const getValidMove = (
+  board: Board,
+  fromPosition: Position,
+  toPosition: Position
+): Board | null => {
+  const fromTile = board.tiles.find(
+    (tile) =>
+      tile.position.column === fromPosition.column &&
+      tile.position.row === fromPosition.row
+  );
+  const toTile = board.tiles.find(
+    (tile) =>
+      tile.position.column === toPosition.column &&
+      tile.position.row === toPosition.row
+  );
+  if (fromTile && toTile) {
+    if (fromTile.piece) {
+      const piece = fromTile.piece;
+      const pieceType = piece.type;
+      const pieceColor = piece.color;
+      const piecePosition = fromTile.position;
+      const pieceMoves = getPieceMoves(
+        board,
+        pieceType,
+        pieceColor,
+        piecePosition
+      );
+      const move = `${fromPosition.column}${fromPosition.row}${toPosition.column}${toPosition.row}`;
+      if (pieceMoves.includes(move)) {
+        return makeMove(board, move);
+      }
+    }
+  }
+  return null;
+};
+
+// given a board, return the list of pieces that have been captured
+// can be done by comparing the current board state to the starting board state
+export const getCapturedPieces = (board: Board): Piece[] => {
+  const startingBoard = getStartingBoard();
+  const capturedPieces = [];
+  for (let i = 0; i < board.tiles.length; i++) {
+    const tile = board.tiles[i];
+    const startingTile = startingBoard.tiles[i];
+    if (tile.piece && !startingTile.piece) {
+      capturedPieces.push(tile.piece);
+    }
+  }
+  return capturedPieces;
 };

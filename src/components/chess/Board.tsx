@@ -1,6 +1,12 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, PropFunction } from "@builder.io/qwik";
 import { Board } from "~/models/Board";
 import Tile from "./Tile";
+import { Tile as TileModel } from "~/models/Tile";
+
+type Props = {
+  board: Board;
+  handleTileClick$: PropFunction<(tile: TileModel) => void>;
+};
 
 export function RowLabel({ row }: { row: number }) {
   return (
@@ -23,7 +29,7 @@ export function ColumnLabels() {
   );
 }
 
-export default component$((board: Board) => {
+export default component$(({ board, handleTileClick$ }: Props) => {
   return (
     <div className="grid grid-cols-9 w-96 h-96 gap-0">
       {board.tiles.map((tile, index) => {
@@ -31,11 +37,11 @@ export default component$((board: Board) => {
           return (
             <>
               <RowLabel row={8 - Math.floor(index / 8) - 1} />
-              <Tile {...tile} />
+              <Tile tile={tile} onClick$={handleTileClick$} />
             </>
           );
         }
-        return <Tile {...tile} />;
+        return <Tile tile={tile} onClick$={handleTileClick$} />;
       })}
       <ColumnLabels />
     </div>
