@@ -16,27 +16,19 @@ export function RowLabel({ row }: { row: number }) {
   );
 }
 
-// row labels
-// from top to bottom
-// 8 7 6 5 4 3 2 1
 export function RowLabels() {
   return (
     <div className="flex flex-col">
-      <RowLabel row={7} />
-      <RowLabel row={6} />
-      <RowLabel row={5} />
-      <RowLabel row={4} />
-      <RowLabel row={3} />
-      <RowLabel row={2} />
-      <RowLabel row={1} />
-      <RowLabel row={0} />
+      {[7, 6, 5, 4, 3, 2, 1, 0].map((row) => (
+        <RowLabel row={row} />
+      ))}
     </div>
   );
 }
 
 export function ColumnLabels() {
   return (
-    <div className="grid grid-cols-9  w-96 h-96 gap-0">
+    <div className="grid grid-cols-9 w-96 h-96 gap-0">
       <div className="w-12 h-12" />
       {["A", "B", "C", "D", "E", "F", "G", "H"].map((letter) => (
         <div className="w-12 h-12 flex justify-center items-center">
@@ -48,22 +40,17 @@ export function ColumnLabels() {
 }
 
 export default component$(({ board, handleTileClick$ }: Props) => {
-  //   return (
-  //     <div className="grid grid-cols-8 gap-0 w-96 h-96">
-  //       {board.tiles.map((tile) => (
-  //         <Tile tile={tile} onClick$={handleTileClick$} />
-  //       ))}
-  //     </div>
-  //   );
-
   return (
-    <div className="flex items-center">
-      <RowLabels />
-      <div className="grid grid-cols-8 gap-0 w-96 h-96">
-        {board.tiles.map((tile) => (
-          <Tile tile={tile} onClick$={handleTileClick$} />
-        ))}
+    <div className="flex flex-col">
+      <div className="flex mt-4">
+        <RowLabels />
+        <div className="grid grid-cols-8 gap-0 w-96 h-96">
+          {board.tiles.map((tile) => (
+            <Tile tile={tile} onClick$={handleTileClick$} />
+          ))}
+        </div>
       </div>
+      <ColumnLabels />
     </div>
   );
 });
