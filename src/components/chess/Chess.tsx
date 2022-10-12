@@ -33,9 +33,35 @@ export default component$(() => {
     }
   });
 
+  // given selected tile, return all valid moves as an array of tiles
+  const getValidMoves = (tile: Tile) => {
+    console.log("getValidMoves", tile);
+    const board = state.board;
+    const validMoves = [];
+    for (let i = 0; i < board.tiles.length; i++) {
+      const newBoard = getValidMove(
+        board,
+        tile.position,
+        board.tiles[i].position
+      );
+      if (newBoard) {
+        validMoves.push(board.tiles[i]);
+      }
+    }
+    return validMoves;
+  };
+
+  const validTiles = state.selectedTile
+    ? getValidMoves(state.selectedTile)
+    : [];
+
   return (
     <div className="flex justify-center mt-12 h-screen">
-      <Board board={state.board} handleTileClick$={handleTileClick$} />
+      <Board
+        board={state.board}
+        validTiles={validTiles}
+        handleTileClick$={handleTileClick$}
+      />
     </div>
   );
 });
