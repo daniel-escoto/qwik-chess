@@ -27,7 +27,10 @@ export default component$(({ tile, validTiles, onClick$ }: Props) => {
   return (
     <div
       className={`w-12 h-12 m-0 p-0 relative ${getTileClass(tile, validTiles)}`}
-      onClick$={() => onClick$(tile)}
+      onClick$={() => {
+        console.log("clicked", tile);
+        onClick$(tile);
+      }}
     >
       {tile.piece && <Piece color={tile.piece.color} type={tile.piece.type} />}
     </div>

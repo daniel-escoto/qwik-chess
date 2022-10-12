@@ -10,10 +10,11 @@ export const getStartingBoard = (): Board => {
     for (let x = 0; x < 8; x++) {
       const piece = getStartingPiece(x, y);
       const color = getTileColor(x, y);
-      const position = { row: y, column: String.fromCharCode(97 + x) };
+      const position = { row: 8 - y, column: String.fromCharCode(97 + x) };
       tiles.push({ piece, color, position });
     }
   }
+
   return { tiles };
 };
 

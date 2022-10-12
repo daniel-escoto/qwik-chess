@@ -55,7 +55,6 @@ export default component$(({ board, validTiles, handleTileClick$ }: Props) => {
           ))}
         </div>
       </div>
-
       <ColumnLabels />
     </div>
   );

@@ -35,7 +35,6 @@ export default component$(() => {
 
   // given selected tile, return all valid moves as an array of tiles
   const getValidMoves = (tile: Tile) => {
-    console.log("getValidMoves", tile);
     const board = state.board;
     const validMoves = [];
     for (let i = 0; i < board.tiles.length; i++) {
