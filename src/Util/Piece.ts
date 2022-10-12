@@ -1,219 +1,124 @@
 import { Board } from "~/models/Board";
 import { PieceType } from "~/models/Piece";
+import { Position } from "~/models/Tile";
+import { getColumnNumber, getColumnString } from "./Board";
 
-// given a board, a piece type, and a piece position, return a list of moves
-export const getPieceMoves = (
-  board: Board,
-  pieceType: PieceType,
-  pieceColor: "white" | "black",
-  piecePosition: { row: number; column: string }
-): string[] => {
-  const moves = [];
+// given a board and a tile with a piece, return all the possible moves
+// for that piece
+export const getPieceMoves = (board: Board, position: Position): Position[] => {
+  const piece = board.tiles.find(
+    (tile) =>
+      tile.position.column === position.column &&
+      tile.position.row === position.row
+  )?.piece;
+
+  if (!piece) {
+    return [];
+  }
+
+  const pieceType = piece.type;
+  const pieceColor = piece.color;
+
   switch (pieceType) {
     case PieceType.Pawn:
-      moves.push(...getPawnMoves(board, pieceColor, piecePosition));
-      break;
+      return getPawnMoves(board, pieceColor, position);
     case PieceType.Knight:
-      moves.push(...getKnightMoves(board, piecePosition));
-      break;
+      // TODO
+      return [];
     case PieceType.Bishop:
-      moves.push(...getBishopMoves(board, piecePosition));
-      break;
+      // TODO
+      return [];
     case PieceType.Rook:
-      moves.push(...getRookMoves(board, piecePosition));
-      break;
+      // TODO
+      return [];
     case PieceType.Queen:
-      moves.push(...getQueenMoves(board, piecePosition));
-      break;
+      // TODO
+      return [];
     case PieceType.King:
-      moves.push(...getKingMoves(board, piecePosition));
-      break;
+      // TODO
+      return [];
   }
-  return moves;
 };
 
-// given a board, and a piece position, return a list of pawn moves
-export const getPawnMoves = (
+// given a board, a piece color, and a position of a pawn, return all the
+// possible moves for that pawn
+const getPawnMoves = (
   board: Board,
   pieceColor: "white" | "black",
-  piecePosition: { row: number; column: string }
-): string[] => {
-  const moves = [];
-  const row = piecePosition.row;
-  const column = piecePosition.column;
-  const tile = board.tiles.find(
-    (tile) => tile.position.column === column && tile.position.row === row
-  );
-  if (tile) {
-    const piece = tile.piece;
-    if (piece) {
-      const pieceType = piece.type;
-      if (pieceType === PieceType.Pawn) {
-        if (pieceColor === "white") {
-          const tileTo = board.tiles.find(
-            (tile) =>
-              tile.position.column === column && tile.position.row === row + 1
-          );
-          if (tileTo && !tileTo.piece) {
-            moves.push(`${column}${row}${column}${row + 1}`);
-          }
-        } else {
-          const tileTo = board.tiles.find(
-            (tile) =>
-              tile.position.column === column && tile.position.row === row - 1
-          );
-          if (tileTo && !tileTo.piece) {
-            moves.push(`${column}${row}${column}${row - 1}`);
-          }
-        }
-      }
-    }
-  }
-  return moves;
-};
+  position: Position
+): Position[] => {
+  const moves: Position[] = [];
 
-// given a board, and a piece position, return a list of knight moves
-export const getKnightMoves = (
-  board: Board,
-  piecePosition: { row: number; column: string }
-): string[] => {
-  const moves = [];
-  const row = piecePosition.row;
-  const column = piecePosition.column;
-  const tile = board.tiles.find(
-    (tile) => tile.position.column === column && tile.position.row === row
-  );
-  if (tile) {
-    const piece = tile.piece;
-    if (piece) {
-      const pieceType = piece.type;
-      if (pieceType === PieceType.Knight) {
-        const tileTo = board.tiles.find(
-          (tile) =>
-            tile.position.column === column && tile.position.row === row + 2
-        );
-        if (tileTo && !tileTo.piece) {
-          moves.push(`${column}${row}${column}${row + 2}`);
-        }
-      }
-    }
-  }
-  return moves;
-};
+  const row = position.row;
+  const newCol = position.column.charCodeAt(0) - 97;
 
-// given a board, and a piece position, return a list of bishop moves
-export const getBishopMoves = (
-  board: Board,
-  piecePosition: { row: number; column: string }
-): string[] => {
-  const moves = [];
-  const row = piecePosition.row;
-  const column = piecePosition.column;
-  const tile = board.tiles.find(
-    (tile) => tile.position.column === column && tile.position.row === row
-  );
-  if (tile) {
-    const piece = tile.piece;
-    if (piece) {
-      const pieceType = piece.type;
-      if (pieceType === PieceType.Bishop) {
-        const tileTo = board.tiles.find(
+  // if the pawn is white, it can move up one or two spaces
+  if (pieceColor === "white") {
+    // if the pawn is on the second row, it can move up two spaces
+    if (row === 2) {
+      // if the tile above and the tile two spaces above are empty, the pawn
+      // can move there
+      if (
+        !board.tiles.find(
           (tile) =>
-            tile.position.column === column && tile.position.row === row + 2
-        );
-        if (tileTo && !tileTo.piece) {
-          moves.push(`${column}${row}${column}${row + 2}`);
-        }
+            tile.position.row === 3 &&
+            getColumnNumber(tile.position.column) === newCol
+        )?.piece &&
+        !board.tiles.find(
+          (tile) =>
+            tile.position.row === 4 &&
+            getColumnNumber(tile.position.column) === newCol
+        )?.piece
+      ) {
+        moves.push({ row: 4, column: getColumnString(newCol) });
       }
     }
-  }
-  return moves;
-};
 
-// given a board, and a piece position, return a list of rook moves
-export const getRookMoves = (
-  board: Board,
-  piecePosition: { row: number; column: string }
-): string[] => {
-  const moves = [];
-  const row = piecePosition.row;
-  const column = piecePosition.column;
-  const tile = board.tiles.find(
-    (tile) => tile.position.column === column && tile.position.row === row
-  );
-  if (tile) {
-    const piece = tile.piece;
-    if (piece) {
-      const pieceType = piece.type;
-      if (pieceType === PieceType.Rook) {
-        const tileTo = board.tiles.find(
-          (tile) =>
-            tile.position.column === column && tile.position.row === row + 2
-        );
-        if (tileTo && !tileTo.piece) {
-          moves.push(`${column}${row}${column}${row + 2}`);
-        }
-      }
+    // if the tile above is empty, the pawn can move there
+    if (
+      !board.tiles.find(
+        (tile) =>
+          tile.position.row === row + 1 &&
+          getColumnNumber(tile.position.column) === newCol
+      )?.piece
+    ) {
+      moves.push({ row: row + 1, column: getColumnString(newCol) });
     }
   }
-  return moves;
-};
 
-// queen
-// given a board, and a piece position, return a list of queen moves
-export const getQueenMoves = (
-  board: Board,
-  piecePosition: { row: number; column: string }
-): string[] => {
-  const moves = [];
-  const row = piecePosition.row;
-  const column = piecePosition.column;
-  const tile = board.tiles.find(
-    (tile) => tile.position.column === column && tile.position.row === row
-  );
-  if (tile) {
-    const piece = tile.piece;
-    if (piece) {
-      const pieceType = piece.type;
-      if (pieceType === PieceType.Queen) {
-        const tileTo = board.tiles.find(
+  // if the pawn is black, it can move down one or two spaces
+  if (pieceColor === "black") {
+    // if the pawn is on the seventh row, it can move down two spaces
+    if (row === 7) {
+      // if the tile below and the tile two spaces below are empty, the pawn
+      // can move there
+      if (
+        !board.tiles.find(
           (tile) =>
-            tile.position.column === column && tile.position.row === row + 2
-        );
-        if (tileTo && !tileTo.piece) {
-          moves.push(`${column}${row}${column}${row + 2}`);
-        }
+            tile.position.row === 6 &&
+            getColumnNumber(tile.position.column) === newCol
+        )?.piece &&
+        !board.tiles.find(
+          (tile) =>
+            tile.position.row === 5 &&
+            getColumnNumber(tile.position.column) === newCol
+        )?.piece
+      ) {
+        moves.push({ row: 5, column: getColumnString(newCol) });
       }
     }
-  }
-  return moves;
-};
 
-// given a board, and a piece position, return a list of king moves
-export const getKingMoves = (
-  board: Board,
-  piecePosition: { row: number; column: string }
-): string[] => {
-  const moves = [];
-  const row = piecePosition.row;
-  const column = piecePosition.column;
-  const tile = board.tiles.find(
-    (tile) => tile.position.column === column && tile.position.row === row
-  );
-  if (tile) {
-    const piece = tile.piece;
-    if (piece) {
-      const pieceType = piece.type;
-      if (pieceType === PieceType.King) {
-        const tileTo = board.tiles.find(
-          (tile) =>
-            tile.position.column === column && tile.position.row === row + 2
-        );
-        if (tileTo && !tileTo.piece) {
-          moves.push(`${column}${row}${column}${row + 2}`);
-        }
-      }
+    // if the tile below is empty, the pawn can move there
+    if (
+      !board.tiles.find(
+        (tile) =>
+          tile.position.row === row - 1 &&
+          getColumnNumber(tile.position.column) === newCol
+      )?.piece
+    ) {
+      moves.push({ row: row - 1, column: getColumnString(newCol) });
     }
   }
+
   return moves;
 };

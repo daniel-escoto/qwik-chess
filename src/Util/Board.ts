@@ -1,4 +1,4 @@
-import { Position, Tile } from "~/models/Tile";
+import { Tile } from "~/models/Tile";
 import { Piece, PieceType } from "~/models/Piece";
 import { Board } from "~/models/Board";
 import { getPieceMoves } from "./Piece";
@@ -135,27 +135,6 @@ export const getBoardFromMove = (board: Board, move: string): Board => {
   return newBoard;
 };
 
-// given a board, return a list of moves
-export const getMovesFromBoard = (board: Board): string[] => {
-  const moves = [];
-  for (const tile of board.tiles) {
-    if (tile.piece) {
-      const piece = tile.piece;
-      const pieceType = piece.type;
-      const pieceColor = piece.color;
-      const piecePosition = tile.position;
-      const pieceMoves = getPieceMoves(
-        board,
-        pieceType,
-        pieceColor,
-        piecePosition
-      );
-      moves.push(...pieceMoves);
-    }
-  }
-  return moves;
-};
-
 // given a list of moves, return the most recent board state
 // starting from the starting board state
 export const getBoardState = (board: Board, moves: string[]): Board => {
@@ -187,55 +166,50 @@ export const makeMove = (board: Board, move: string): Board => {
   return newBoard;
 };
 
-// given a board, a beginning tile position, and an ending tile position,
-// return a board if the move is valid, otherwise return null
-export const getValidMove = (
-  board: Board,
-  fromPosition: Position,
-  toPosition: Position
-): Board | null => {
-  const fromTile = board.tiles.find(
-    (tile) =>
-      tile.position.column === fromPosition.column &&
-      tile.position.row === fromPosition.row
-  );
-  const toTile = board.tiles.find(
-    (tile) =>
-      tile.position.column === toPosition.column &&
-      tile.position.row === toPosition.row
-  );
-  if (fromTile && toTile) {
-    if (fromTile.piece) {
-      const piece = fromTile.piece;
-      const pieceType = piece.type;
-      const pieceColor = piece.color;
-      const piecePosition = fromTile.position;
-      const pieceMoves = getPieceMoves(
-        board,
-        pieceType,
-        pieceColor,
-        piecePosition
-      );
-      const move = `${fromPosition.column}${fromPosition.row}${toPosition.column}${toPosition.row}`;
-      if (pieceMoves.includes(move)) {
-        return makeMove(board, move);
-      }
-    }
+// given a column string, return the column number
+export const getColumnNumber = (column: string): number => {
+  switch (column) {
+    case "a":
+      return 1;
+    case "b":
+      return 2;
+    case "c":
+      return 3;
+    case "d":
+      return 4;
+    case "e":
+      return 5;
+    case "f":
+      return 6;
+    case "g":
+      return 7;
+    case "h":
+      return 8;
+    default:
+      throw new Error("Invalid column");
   }
-  return null;
 };
 
-// given a board, return the list of pieces that have been captured
-// can be done by comparing the current board state to the starting board state
-export const getCapturedPieces = (board: Board): Piece[] => {
-  const startingBoard = getStartingBoard();
-  const capturedPieces = [];
-  for (let i = 0; i < board.tiles.length; i++) {
-    const tile = board.tiles[i];
-    const startingTile = startingBoard.tiles[i];
-    if (tile.piece && !startingTile.piece) {
-      capturedPieces.push(tile.piece);
-    }
+// given a column number, return the column string
+export const getColumnString = (column: number): string => {
+  switch (column) {
+    case 1:
+      return "a";
+    case 2:
+      return "b";
+    case 3:
+      return "c";
+    case 4:
+      return "d";
+    case 5:
+      return "e";
+    case 6:
+      return "f";
+    case 7:
+      return "g";
+    case 8:
+      return "h";
+    default:
+      throw new Error("Invalid column");
   }
-  return capturedPieces;
 };

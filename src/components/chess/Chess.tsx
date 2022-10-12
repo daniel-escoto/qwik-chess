@@ -1,7 +1,7 @@
 import { $, component$, useStore } from "@builder.io/qwik";
 import Board from "./Board";
 import { Board as BoardModel } from "~/models/Board";
-import { getStartingBoard, getValidMove } from "~/Util/Board";
+import { getStartingBoard } from "~/Util/Board";
 import { Tile } from "~/models/Tile";
 
 export default component$(() => {
@@ -17,11 +17,7 @@ export default component$(() => {
     const board = state.board;
     const selectedTile = state.selectedTile;
     if (selectedTile) {
-      const newBoard = getValidMove(
-        board,
-        selectedTile.position,
-        tile.position
-      );
+      const newBoard = board;
       if (newBoard) {
         state.board = newBoard;
         state.selectedTile = null;
@@ -36,18 +32,16 @@ export default component$(() => {
   // given selected tile, return all valid moves as an array of tiles
   const getValidMoves = (tile: Tile) => {
     const board = state.board;
-    const validMoves = [];
-    for (let i = 0; i < board.tiles.length; i++) {
-      const newBoard = getValidMove(
-        board,
-        tile.position,
-        board.tiles[i].position
-      );
+    const selectedTile = state.selectedTile;
+
+    if (selectedTile) {
+      const newBoard = board;
+
       if (newBoard) {
-        validMoves.push(board.tiles[i]);
+        return newBoard.tiles;
       }
     }
-    return validMoves;
+    return [];
   };
 
   const validTiles = state.selectedTile
