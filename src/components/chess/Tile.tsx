@@ -1,7 +1,7 @@
 import { component$, PropFunction } from "@builder.io/qwik";
 import { Tile } from "~/models/Tile";
 import Piece from "./Piece";
-import { isSameTile } from "~/Util/Tile";
+import { isSameTile } from "~/util/Tile";
 
 type Props = {
   tile: Tile;

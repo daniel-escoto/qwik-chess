@@ -1,7 +1,7 @@
 import { $, component$, useStore } from "@builder.io/qwik";
 import Board from "./Board";
 import { Board as BoardModel } from "~/models/Board";
-import { getStartingBoard } from "~/Util/Board";
+import { getStartingBoard } from "~/util/Board";
 import { Tile } from "~/models/Tile";
 
 export default component$(() => {
