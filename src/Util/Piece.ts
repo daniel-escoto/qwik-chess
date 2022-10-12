@@ -47,76 +47,71 @@ const getPawnMoves = (
   pieceColor: "white" | "black",
   position: Position
 ): Position[] => {
+  const column = getColumnNumber(position.column);
+  const row = position.row;
+
   const moves: Position[] = [];
 
-  const row = position.row;
-  const newCol = position.column.charCodeAt(0) - 97;
+  console.log("column", column);
+  console.log("row", row);
 
-  // if the pawn is white, it can move up one or two spaces
   if (pieceColor === "white") {
-    // if the pawn is on the second row, it can move up two spaces
+    // if the pawn is on the first row, it can move two spaces
     if (row === 2) {
-      // if the tile above and the tile two spaces above are empty, the pawn
-      // can move there
-      if (
-        !board.tiles.find(
-          (tile) =>
-            tile.position.row === 3 &&
-            getColumnNumber(tile.position.column) === newCol
-        )?.piece &&
-        !board.tiles.find(
-          (tile) =>
-            tile.position.row === 4 &&
-            getColumnNumber(tile.position.column) === newCol
-        )?.piece
-      ) {
-        moves.push({ row: 4, column: getColumnString(newCol) });
-      }
+      moves.push({ column: getColumnString(column), row: row + 2 });
     }
 
-    // if the tile above is empty, the pawn can move there
-    if (
-      !board.tiles.find(
-        (tile) =>
-          tile.position.row === row + 1 &&
-          getColumnNumber(tile.position.column) === newCol
-      )?.piece
-    ) {
-      moves.push({ row: row + 1, column: getColumnString(newCol) });
-    }
-  }
+    // the pawn can always move one space forward
+    moves.push({ column: getColumnString(column), row: row + 1 });
 
-  // if the pawn is black, it can move down one or two spaces
-  if (pieceColor === "black") {
-    // if the pawn is on the seventh row, it can move down two spaces
+    // the pawn can move one space diagonally if there is an enemy piece there
+    const hasEnemyPieceToTheLeft = board.tiles.some(
+      (tile) =>
+        tile.position.column === getColumnString(column - 1) &&
+        tile.position.row === row + 1 &&
+        tile.piece?.color === "black"
+    );
+    if (hasEnemyPieceToTheLeft) {
+      moves.push({ column: getColumnString(column - 1), row: row + 1 });
+    }
+
+    const hasEnemyPieceToTheRight = board.tiles.some(
+      (tile) =>
+        tile.position.column === getColumnString(column + 1) &&
+        tile.position.row === row + 1 &&
+        tile.piece?.color === "black"
+    );
+    if (hasEnemyPieceToTheRight) {
+      moves.push({ column: getColumnString(column + 1), row: row + 1 });
+    }
+  } else {
+    // if the pawn is on the first row, it can move two spaces
     if (row === 7) {
-      // if the tile below and the tile two spaces below are empty, the pawn
-      // can move there
-      if (
-        !board.tiles.find(
-          (tile) =>
-            tile.position.row === 6 &&
-            getColumnNumber(tile.position.column) === newCol
-        )?.piece &&
-        !board.tiles.find(
-          (tile) =>
-            tile.position.row === 5 &&
-            getColumnNumber(tile.position.column) === newCol
-        )?.piece
-      ) {
-        moves.push({ row: 5, column: getColumnString(newCol) });
-      }
+      moves.push({ column: getColumnString(column), row: row - 2 });
     }
 
-    // if the tile below is empty, the pawn can move there
-    if (
-      !board.tiles.find(
-        (tile) =>
-          tile.position.row === row - 1 &&
-          getColumnNumber(tile.position.column) === newCol
-      )?.piece
-    ) {
-      moves.push({ row: row - 1, column: getColumnString(newCol) });
+    // the pawn can always move one space forward
+    moves.push({ column: getColumnString(column), row: row - 1 });
+
+    // the pawn can move one space diagonally if there is an enemy piece there
+    const hasEnemyPieceToTheLeft = board.tiles.some(
+      (tile) =>
+        tile.position.column === getColumnString(column - 1) &&
+        tile.position.row === row - 1 &&
+        tile.piece?.color === "white"
+    );
+    if (hasEnemyPieceToTheLeft) {
+      moves.push({ column: getColumnString(column - 1), row: row - 1 });
+    }
+
+    const hasEnemyPieceToTheRight = board.tiles.some(
+      (tile) =>
+        tile.position.column === getColumnString(column + 1) &&
+        tile.position.row === row - 1 &&
+        tile.piece?.color === "white"
+    );
+    if (hasEnemyPieceToTheRight) {
+      moves.push({ column: getColumnString(column + 1), row: row - 1 });
     }
   }
 

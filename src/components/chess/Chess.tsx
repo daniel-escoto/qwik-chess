@@ -3,6 +3,7 @@ import Board from "./Board";
 import { Board as BoardModel } from "~/models/Board";
 import { getStartingBoard } from "~/util/Board";
 import { Tile } from "~/models/Tile";
+import { getPieceMoves } from "~/Util/Piece";
 
 export default component$(() => {
   const state = useStore<{
@@ -14,6 +15,9 @@ export default component$(() => {
   });
 
   const handleTileClick$ = $((tile: Tile) => {
+    const possibleMoves = getPieceMoves(state.board, tile.position);
+    console.log("possibleMoves", possibleMoves);
+
     const board = state.board;
     const selectedTile = state.selectedTile;
     if (selectedTile) {

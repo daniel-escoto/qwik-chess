@@ -170,21 +170,21 @@ export const makeMove = (board: Board, move: string): Board => {
 export const getColumnNumber = (column: string): number => {
   switch (column) {
     case "a":
-      return 1;
+      return 0;
     case "b":
-      return 2;
+      return 1;
     case "c":
-      return 3;
+      return 2;
     case "d":
-      return 4;
+      return 3;
     case "e":
-      return 5;
+      return 4;
     case "f":
-      return 6;
+      return 5;
     case "g":
-      return 7;
+      return 6;
     case "h":
-      return 8;
+      return 7;
     default:
       throw new Error("Invalid column");
   }
@@ -193,21 +193,21 @@ export const getColumnNumber = (column: string): number => {
 // given a column number, return the column string
 export const getColumnString = (column: number): string => {
   switch (column) {
-    case 1:
+    case 0:
       return "a";
-    case 2:
+    case 1:
       return "b";
-    case 3:
+    case 2:
       return "c";
-    case 4:
+    case 3:
       return "d";
-    case 5:
+    case 4:
       return "e";
-    case 6:
+    case 5:
       return "f";
-    case 7:
+    case 6:
       return "g";
-    case 8:
+    case 7:
       return "h";
     default:
       throw new Error("Invalid column");

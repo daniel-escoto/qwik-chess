@@ -28,7 +28,6 @@ export default component$(({ tile, validTiles, onClick$ }: Props) => {
     <div
       className={`w-12 h-12 m-0 p-0 relative ${getTileClass(tile, validTiles)}`}
       onClick$={() => {
-        console.log("clicked", tile);
         onClick$(tile);
       }}
     >
