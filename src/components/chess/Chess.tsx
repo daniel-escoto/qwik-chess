@@ -3,14 +3,14 @@ import Board from "./Board";
 import { Board as BoardModel } from "~/models/Board";
 import { Tile } from "~/models/Tile";
 import { getPieceMoves } from "~/Util/Piece";
-import { generateBoard, generateBoardWithoutPawns } from "~/Util/Board";
+import { generateBoard } from "~/Util/Board";
 
 export default component$(() => {
   const state = useStore<{
     board: BoardModel;
     selectedTile: Tile | null;
   }>({
-    board: generateBoardWithoutPawns(),
+    board: generateBoard(),
     selectedTile: null,
   });
 

@@ -37,7 +37,6 @@ export const getPieceMoves = (board: Board, position: Position): Position[] => {
   }
 
   const pieceType = piece.type;
-  const pieceColor = piece.color;
 
   switch (pieceType) {
     case PieceType.Pawn:
@@ -298,6 +297,8 @@ const getBishopMovesHelper = (board: Board, position: Position): Position[] => {
   const column = getColumnNumber(position.column); // 1-8
   const row = position.row; // 1-8
 
+  const pieceColor = board.tiles[row - 1][column - 1].piece?.color;
+
   const tiles = board.tiles.flat();
 
   const moves: Position[] = [];
@@ -338,8 +339,10 @@ const getBishopMovesHelper = (board: Board, position: Position): Position[] => {
 
       if (!tile.piece) {
         moves.push({ column: getColumnString(currentColumn), row: currentRow });
-      } else {
+      } else if (tile.piece.color !== pieceColor) {
         moves.push({ column: getColumnString(currentColumn), row: currentRow });
+        break;
+      } else {
         break;
       }
     }
