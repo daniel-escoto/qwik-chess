@@ -3,12 +3,14 @@ import { Board } from "~/models/Board";
 import Tile from "./Tile";
 import { Position, Tile as TileModel } from "~/models/Tile";
 import ScoreBug from "./ScoreBug";
+import { Piece } from "~/models/Piece";
 
 type Props = {
   board: Board;
   possibleMoves: Position[];
   selectedTile: TileModel | null;
   isWhitesTurn: boolean;
+  capturedPieces: Piece[];
   handleTileClick$: PropFunction<(tile: TileModel) => void>;
 };
 
@@ -49,6 +51,7 @@ export default component$(
     possibleMoves,
     selectedTile,
     isWhitesTurn,
+    capturedPieces,
     handleTileClick$,
   }: Props) => {
     // boardToRender is board.tiles.flat() upside down
@@ -71,7 +74,10 @@ export default component$(
             </div>
             {/* TODO: column labels */}
             <div className="mt-4 w-full">
-              <ScoreBug isWhitesTurn={isWhitesTurn} />
+              <ScoreBug
+                isWhitesTurn={isWhitesTurn}
+                capturedPieces={capturedPieces}
+              />
             </div>
           </div>
         </div>

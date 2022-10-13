@@ -4,17 +4,19 @@ import { Board as BoardModel } from "~/models/Board";
 import { Tile } from "~/models/Tile";
 import { getPieceMoves } from "~/util/Piece/Piece";
 import { generateBoard, movePiece } from "~/Util/Board";
-import { PieceColor } from "~/models/Piece";
+import { PieceColor, Piece } from "~/models/Piece";
 
 export default component$(() => {
   const state = useStore<{
     board: BoardModel;
     selectedTile: Tile | null;
     isWhitesTurn: boolean;
+    capturedPieces: Piece[];
   }>({
     board: generateBoard(),
     selectedTile: null,
     isWhitesTurn: true,
+    capturedPieces: [],
   });
 
   const handleTileClick$ = $((tile: Tile) => {
@@ -57,6 +59,7 @@ export default component$(() => {
         possibleMoves={possibleMoves}
         selectedTile={state.selectedTile}
         isWhitesTurn={state.isWhitesTurn}
+        capturedPieces={state.capturedPieces}
         handleTileClick$={handleTileClick$}
       />
     </div>
