@@ -180,25 +180,28 @@ export const getColumnString = (column: number): string => {
 // given a board, a starting position, and an ending position,
 // return a new board with the piece at the ending position
 // if the move is valid, else return the original board
+// also if a piece is captured, return the captured piece
+
 export const movePiece = (
   board: Board,
   start: Position,
   end: Position
-): Board => {
+): {
+  board: Board;
+  capturedPiece: Piece | null;
+} => {
   const piece = getPiece(board, start);
 
   if (piece && isValidMove(board, start, end)) {
     const newBoard = { ...board };
-    const startTile = getTileAtPosition(newBoard, start);
-    const endTile = getTileAtPosition(newBoard, end);
+    const capturedPiece = getPiece(newBoard, end);
 
-    if (startTile && endTile) {
-      startTile.piece = null;
-      endTile.piece = piece;
-    }
+    newBoard.tiles[end.row - 1][getColumnNumber(end.column) - 1].piece = piece;
+    newBoard.tiles[start.row - 1][getColumnNumber(start.column) - 1].piece =
+      null;
 
-    return newBoard;
+    return { board: newBoard, capturedPiece };
   } else {
-    return board;
+    return { board, capturedPiece: null };
   }
 };

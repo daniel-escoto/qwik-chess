@@ -20,16 +20,18 @@ export default component$(() => {
   });
 
   const handleTileClick$ = $((tile: Tile) => {
-    if (!state.isWhitesTurn && tile.piece?.color === PieceColor.White) {
-      return;
-    }
+    if (!state.selectedTile) {
+      if (!state.isWhitesTurn && tile.piece?.color === PieceColor.White) {
+        return;
+      }
 
-    if (state.isWhitesTurn && tile.piece?.color === PieceColor.Black) {
-      return;
+      if (state.isWhitesTurn && tile.piece?.color === PieceColor.Black) {
+        return;
+      }
     }
 
     if (state.selectedTile && tile !== state.selectedTile) {
-      const newBoard = movePiece(
+      const { board: newBoard, capturedPiece } = movePiece(
         state.board,
         state.selectedTile.position,
         tile.position
@@ -38,6 +40,10 @@ export default component$(() => {
       // change turn only if newBoard is different from old board
       if (newBoard !== state.board) {
         state.isWhitesTurn = !state.isWhitesTurn;
+
+        if (capturedPiece) {
+          state.capturedPieces.push(capturedPiece);
+        }
       }
 
       state.board = newBoard;
