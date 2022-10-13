@@ -34,8 +34,7 @@ export function RowLabels() {
 
 export function ColumnLabels() {
   return (
-    <div className="grid grid-cols-9 gap-0">
-      <div className="w-12 h-12" />
+    <div className="grid grid-cols-8 gap-0">
       {["A", "B", "C", "D", "E", "F", "G", "H"].map((letter) => (
         <div className="w-12 h-12 flex justify-center items-center">
           <span className="text-2xl">{letter}</span>
@@ -73,6 +72,7 @@ export default component$(
               ))}
             </div>
             {/* TODO: column labels */}
+            <ColumnLabels />
             <div className="mt-4 w-full">
               <ScoreBug
                 isWhitesTurn={isWhitesTurn}
