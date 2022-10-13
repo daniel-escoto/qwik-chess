@@ -4,6 +4,7 @@ import { Board as BoardModel } from "~/models/Board";
 import { Tile } from "~/models/Tile";
 import { getPieceMoves } from "~/Util/Piece";
 import { generateBoard, movePiece } from "~/Util/Board";
+import { PieceColor } from "~/models/Piece";
 
 export default component$(() => {
   const state = useStore<{
@@ -17,11 +18,11 @@ export default component$(() => {
   });
 
   const handleTileClick$ = $((tile: Tile) => {
-    if (!state.isWhitesTurn && tile.piece?.color === "white") {
+    if (!state.isWhitesTurn && tile.piece?.color === PieceColor.White) {
       return;
     }
 
-    if (state.isWhitesTurn && tile.piece?.color === "black") {
+    if (state.isWhitesTurn && tile.piece?.color === PieceColor.Black) {
       return;
     }
 

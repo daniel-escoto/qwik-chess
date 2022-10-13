@@ -11,22 +11,22 @@ import WhiteKnight from "../../../public/pieces/WhiteKnight.svg";
 import WhitePawn from "../../../public/pieces/WhitePawn.svg";
 import WhiteQueen from "../../../public/pieces/WhiteQueen.svg";
 import WhiteRook from "../../../public/pieces/WhiteRook.svg";
-import { Piece, PieceType } from "../../models/Piece";
+import { Piece, PieceColor, PieceType } from "../../models/Piece";
 
 export function getPieceImage(piece: Piece) {
   switch (piece.type) {
     case PieceType.Pawn:
-      return piece.color === "white" ? WhitePawn : BlackPawn;
+      return piece.color === PieceColor.White ? WhitePawn : BlackPawn;
     case PieceType.Knight:
-      return piece.color === "white" ? WhiteKnight : BlackKnight;
+      return piece.color === PieceColor.White ? WhiteKnight : BlackKnight;
     case PieceType.Bishop:
-      return piece.color === "white" ? WhiteBishop : BlackBishop;
+      return piece.color === PieceColor.White ? WhiteBishop : BlackBishop;
     case PieceType.Rook:
-      return piece.color === "white" ? WhiteRook : BlackRook;
+      return piece.color === PieceColor.White ? WhiteRook : BlackRook;
     case PieceType.Queen:
-      return piece.color === "white" ? WhiteQueen : BlackQueen;
+      return piece.color === PieceColor.White ? WhiteQueen : BlackQueen;
     case PieceType.King:
-      return piece.color === "white" ? WhiteKing : BlackKing;
+      return piece.color === PieceColor.White ? WhiteKing : BlackKing;
   }
 }
 

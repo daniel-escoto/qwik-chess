@@ -7,7 +7,12 @@ export enum PieceType {
   King = "King",
 }
 
+export enum PieceColor {
+  White = "White",
+  Black = "Black",
+}
+
 export type Piece = {
   type: PieceType;
-  color: "white" | "black";
+  color: PieceColor;
 };

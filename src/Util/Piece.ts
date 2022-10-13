@@ -1,5 +1,5 @@
 import { Board } from "~/models/Board";
-import { Piece, PieceType } from "~/models/Piece";
+import { Piece, PieceColor, PieceType } from "~/models/Piece";
 import { Position } from "~/models/Tile";
 import { getColumnNumber, getColumnString } from "./Board";
 
@@ -72,7 +72,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
   const pieceColor = piece.color;
 
-  if (pieceColor === "white") {
+  if (pieceColor === PieceColor.White) {
     // check if the pawn is on the last row
     if (row === 8) {
       return [];

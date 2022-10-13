@@ -1,5 +1,5 @@
 import { Position, Tile } from "~/models/Tile";
-import { Piece, PieceType } from "~/models/Piece";
+import { Piece, PieceColor, PieceType } from "~/models/Piece";
 import { Board } from "~/models/Board";
 import { isValidMove, getPiece } from "./Piece";
 import { getTileAtPosition } from "./Tile";
@@ -77,9 +77,9 @@ const getStartingPiece = (y: number, x: number): Piece | null => {
   if (y === 1) {
     return getStartingPieceForWhite(x);
   } else if (y === 2) {
-    return { type: PieceType.Pawn, color: "white" };
+    return { type: PieceType.Pawn, color: PieceColor.White };
   } else if (y === 7) {
-    return { type: PieceType.Pawn, color: "black" };
+    return { type: PieceType.Pawn, color: PieceColor.Black };
   } else if (y === 8) {
     return getStartingPieceForBlack(x);
   } else {
@@ -92,17 +92,17 @@ const getStartingPieceForBlack = (x: number): Piece => {
   switch (x) {
     case 1:
     case 8:
-      return { type: PieceType.Rook, color: "black" };
+      return { type: PieceType.Rook, color: PieceColor.Black };
     case 2:
     case 7:
-      return { type: PieceType.Knight, color: "black" };
+      return { type: PieceType.Knight, color: PieceColor.Black };
     case 3:
     case 6:
-      return { type: PieceType.Bishop, color: "black" };
+      return { type: PieceType.Bishop, color: PieceColor.Black };
     case 4:
-      return { type: PieceType.Queen, color: "black" };
+      return { type: PieceType.Queen, color: PieceColor.Black };
     case 5:
-      return { type: PieceType.King, color: "black" };
+      return { type: PieceType.King, color: PieceColor.Black };
     default:
       throw new Error("Invalid starting piece");
   }
@@ -113,17 +113,17 @@ const getStartingPieceForWhite = (x: number): Piece => {
   switch (x) {
     case 1:
     case 8:
-      return { type: PieceType.Rook, color: "white" };
+      return { type: PieceType.Rook, color: PieceColor.White };
     case 2:
     case 7:
-      return { type: PieceType.Knight, color: "white" };
+      return { type: PieceType.Knight, color: PieceColor.White };
     case 3:
     case 6:
-      return { type: PieceType.Bishop, color: "white" };
+      return { type: PieceType.Bishop, color: PieceColor.White };
     case 4:
-      return { type: PieceType.Queen, color: "white" };
+      return { type: PieceType.Queen, color: PieceColor.White };
     case 5:
-      return { type: PieceType.King, color: "white" };
+      return { type: PieceType.King, color: PieceColor.White };
     default:
       throw new Error("Invalid starting piece");
   }
