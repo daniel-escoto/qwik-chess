@@ -181,7 +181,6 @@ export const getColumnString = (column: number): string => {
 // return a new board with the piece at the ending position
 // if the move is valid, else return the original board
 // also if a piece is captured, return the captured piece
-
 export const movePiece = (
   board: Board,
   start: Position,
