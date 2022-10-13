@@ -16,3 +16,8 @@ export type Piece = {
   type: PieceType;
   color: PieceColor;
 };
+
+export type CheckStatus = {
+  whiteIsInCheck: boolean;
+  blackIsInCheck: boolean;
+};

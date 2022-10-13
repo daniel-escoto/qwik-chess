@@ -2,7 +2,7 @@ import { $, component$, useStore } from "@builder.io/qwik";
 import Board from "./Board";
 import { Board as BoardModel } from "~/models/Board";
 import { Tile } from "~/models/Tile";
-import { getPieceMoves } from "~/Util/Piece";
+import { getPieceMoves } from "~/util/Piece/Piece";
 import { generateBoard, movePiece } from "~/Util/Board";
 import { PieceColor } from "~/models/Piece";
 

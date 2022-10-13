@@ -1,7 +1,7 @@
 import { Position, Tile } from "~/models/Tile";
 import { Piece, PieceColor, PieceType } from "~/models/Piece";
 import { Board } from "~/models/Board";
-import { isValidMove, getPiece } from "./Piece";
+import { isValidMove, getPiece } from "./Piece/Piece";
 import { getTileAtPosition } from "./Tile";
 
 // generate a board with the starting pieces in the correct positions
