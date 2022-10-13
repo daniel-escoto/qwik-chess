@@ -34,7 +34,7 @@ export default component$((piece: Piece) => {
   return (
     <img
       src={getPieceImage(piece)}
-      className="absolute inset-0 w-full h-full"
+      className="absolute inset-0 w-full h-full cursor-pointer"
     />
   );
 });

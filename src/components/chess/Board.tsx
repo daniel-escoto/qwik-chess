@@ -1,11 +1,12 @@
 import { component$, PropFunction } from "@builder.io/qwik";
 import { Board } from "~/models/Board";
 import Tile from "./Tile";
-import { Tile as TileModel } from "~/models/Tile";
+import { Position, Tile as TileModel } from "~/models/Tile";
 
 type Props = {
   board: Board;
-  validTiles: TileModel[];
+  possibleMoves: Position[];
+  selectedTile: TileModel | null;
   handleTileClick$: PropFunction<(tile: TileModel) => void>;
 };
 
@@ -40,22 +41,27 @@ export function ColumnLabels() {
   );
 }
 
-export default component$(({ board, validTiles, handleTileClick$ }: Props) => {
-  return (
-    <div className="flex flex-col">
-      <div className="flex mt-4">
-        <RowLabels />
-        <div className="grid grid-cols-8 gap-0 w-96 h-96">
-          {board.tiles.map((tile) => (
-            <Tile
-              tile={tile}
-              validTiles={validTiles}
-              onClick$={handleTileClick$}
-            />
-          ))}
+export default component$(
+  ({ board, possibleMoves, selectedTile, handleTileClick$ }: Props) => {
+    // boardToRender is board.tiles.flat() upside down
+    const boardTilesToRender = board.tiles.slice().reverse().flat();
+
+    return (
+      <div className="flex flex-col">
+        <div className="flex mt-4">
+          <RowLabels />
+          <div className="grid grid-cols-8 gap-0 w-96 h-96">
+            {boardTilesToRender.flat().map((tile) => (
+              <Tile
+                tile={tile}
+                possibleMoves={possibleMoves}
+                isSelected={selectedTile === tile}
+                onClick$={handleTileClick$}
+              />
+            ))}
+          </div>
         </div>
       </div>
-      <ColumnLabels />
-    </div>
-  );
-});
+    );
+  }
+);

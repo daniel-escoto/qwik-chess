@@ -2,7 +2,7 @@ import { Piece } from "./Piece";
 
 export type Position = {
   row: number;
-  column: string; // a-h
+  column: string;
 };
 
 export type Tile = {

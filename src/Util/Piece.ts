@@ -6,11 +6,12 @@ import { getColumnNumber, getColumnString } from "./Board";
 // given a board and a tile with a piece, return all the possible moves
 // for that piece
 export const getPieceMoves = (board: Board, position: Position): Position[] => {
-  const piece = board.tiles.find(
-    (tile) =>
+  const piece = board.tiles.flat().find((tile) => {
+    return (
       tile.position.column === position.column &&
       tile.position.row === position.row
-  )?.piece;
+    );
+  })?.piece;
 
   if (!piece) {
     return [];
@@ -21,99 +22,278 @@ export const getPieceMoves = (board: Board, position: Position): Position[] => {
 
   switch (pieceType) {
     case PieceType.Pawn:
-      return getPawnMoves(board, pieceColor, position);
+      return getPawnMoves(board, position);
     case PieceType.Knight:
-      // TODO
-      return [];
+      return getKnightMoves(board, position);
     case PieceType.Bishop:
-      // TODO
-      return [];
+      return getBishopMoves(board, position);
     case PieceType.Rook:
-      // TODO
-      return [];
+      return getRookMoves(board, position);
     case PieceType.Queen:
-      // TODO
-      return [];
+      return getQueenMoves(board, position);
     case PieceType.King:
-      // TODO
-      return [];
+      return getKingMoves(board, position);
   }
 };
 
 // given a board, a piece color, and a position of a pawn, return all the
 // possible moves for that pawn
-const getPawnMoves = (
-  board: Board,
-  pieceColor: "white" | "black",
-  position: Position
-): Position[] => {
+const getPawnMoves = (board: Board, position: Position): Position[] => {
+  // if the pawn is white, then it can move up
+  // if the pawn is black, then it can move down
+  // if the pawn is on the starting row, then it can move 2 spaces
+  // otherwise, it can only move 1 space
+  // if the pawn is on the last row, then it cannot move forward
+  // if the pawn is on the first column, then it cannot move left
+  // if the pawn is on the last column, then it cannot move right
+  // a pawn can capture diagonally
+
+  const column = getColumnNumber(position.column); // 1-8
+  const row = position.row; // 1-8
+
+  const moves: Position[] = [];
+
+  // check if the board with given position has a pawn
+  const piece = board.tiles.flat().find((tile) => {
+    return (
+      tile.position.column === position.column &&
+      tile.position.row === position.row
+    );
+  })?.piece;
+
+  if (!piece) {
+    return [];
+  }
+
+  const pieceType = piece.type;
+  const pieceColor = piece.color;
+
+  if (pieceType !== PieceType.Pawn) {
+    return [];
+  }
+
+  if (pieceColor === "white") {
+    // check if the pawn is on the last row
+    if (row === 8) {
+      return [];
+    }
+
+    // check if the pawn can move forward 1 space
+    const forwardOneSpace = board.tiles.flat().find((tile) => {
+      return (
+        tile.position.column === position.column &&
+        tile.position.row === row + 1
+      );
+    });
+
+    if (!forwardOneSpace) {
+      return [];
+    }
+
+    if (!forwardOneSpace.piece) {
+      moves.push({ column: position.column, row: row + 1 });
+    }
+
+    // check if the pawn can move forward 2 spaces
+    if (row === 2) {
+      const forwardTwoSpaces = board.tiles.flat().find((tile) => {
+        return (
+          tile.position.column === position.column &&
+          tile.position.row === row + 2
+        );
+      });
+
+      if (!forwardTwoSpaces) {
+        return [];
+      }
+
+      if (!forwardTwoSpaces.piece) {
+        moves.push({ column: position.column, row: row + 2 });
+      }
+    }
+
+    // check if the pawn can move right 1 space
+    if (column < 8) {
+      const rightOneSpace = board.tiles.flat().find((tile) => {
+        return (
+          tile.position.column === getColumnString(column + 1) &&
+          tile.position.row === row + 1
+        );
+      });
+
+      if (!rightOneSpace) {
+        return [];
+      }
+
+      if (rightOneSpace.piece) {
+        moves.push({
+          column: getColumnString(column + 1),
+          row: row + 1,
+        });
+      }
+    }
+
+    // check if the pawn can move left 1 space
+    if (column > 1) {
+      const leftOneSpace = board.tiles.flat().find((tile) => {
+        return (
+          tile.position.column === getColumnString(column - 1) &&
+          tile.position.row === row + 1
+        );
+      });
+
+      if (!leftOneSpace) {
+        return [];
+      }
+
+      if (leftOneSpace.piece) {
+        moves.push({
+          column: getColumnString(column - 1),
+          row: row + 1,
+        });
+      }
+    }
+  } else {
+    // check if the pawn is on the first row
+    if (row === 1) {
+      return [];
+    }
+
+    // check if the pawn can move forward 1 space
+    const forwardOneSpace = board.tiles.flat().find((tile) => {
+      return (
+        tile.position.column === position.column &&
+        tile.position.row === row - 1
+      );
+    });
+
+    if (!forwardOneSpace) {
+      return [];
+    }
+
+    if (!forwardOneSpace.piece) {
+      moves.push({ column: position.column, row: row - 1 });
+    }
+
+    // check if the pawn can move forward 2 spaces
+    if (row === 7) {
+      const forwardTwoSpaces = board.tiles.flat().find((tile) => {
+        return (
+          tile.position.column === position.column &&
+          tile.position.row === row - 2
+        );
+      });
+
+      if (!forwardTwoSpaces) {
+        return [];
+      }
+
+      if (!forwardTwoSpaces.piece) {
+        moves.push({ column: position.column, row: row - 2 });
+      }
+    }
+
+    // check if the pawn can move right 1 space
+    if (column < 8) {
+      const rightOneSpace = board.tiles.flat().find((tile) => {
+        return (
+          tile.position.column === getColumnString(column + 1) &&
+          tile.position.row === row - 1
+        );
+      });
+
+      if (!rightOneSpace) {
+        return [];
+      }
+
+      if (rightOneSpace.piece) {
+        moves.push({
+          column: getColumnString(column + 1),
+          row: row - 1,
+        });
+      }
+    }
+
+    // check if the pawn can move left 1 space
+    if (column > 1) {
+      const leftOneSpace = board.tiles.flat().find((tile) => {
+        return (
+          tile.position.column === getColumnString(column - 1) &&
+          tile.position.row === row - 1
+        );
+      });
+
+      if (!leftOneSpace) {
+        return [];
+      }
+
+      if (leftOneSpace.piece) {
+        moves.push({
+          column: getColumnString(column - 1),
+          row: row - 1,
+        });
+      }
+    }
+  }
+
+  return moves;
+};
+
+// given a board, and a position of a knight, return all the possible moves
+// for that knight
+const getKnightMoves = (board: Board, position: Position): Position[] => {
+  // TODO: fix
+  return [];
+};
+
+// given a board, and a position of a bishop, return all the possible moves
+// for that bishop
+const getBishopMoves = (board: Board, position: Position): Position[] => {
   const column = getColumnNumber(position.column);
   const row = position.row;
 
   const moves: Position[] = [];
 
-  console.log("column", column);
-  console.log("row", row);
+  // TODO
 
-  if (pieceColor === "white") {
-    // if the pawn is on the first row, it can move two spaces
-    if (row === 2) {
-      moves.push({ column: getColumnString(column), row: row + 2 });
-    }
+  return moves;
+};
 
-    // the pawn can always move one space forward
-    moves.push({ column: getColumnString(column), row: row + 1 });
+// given a board, and a position of a rook, return all the possible moves
+// for that rook
+const getRookMoves = (board: Board, position: Position): Position[] => {
+  const column = getColumnNumber(position.column);
+  const row = position.row;
 
-    // the pawn can move one space diagonally if there is an enemy piece there
-    const hasEnemyPieceToTheLeft = board.tiles.some(
-      (tile) =>
-        tile.position.column === getColumnString(column - 1) &&
-        tile.position.row === row + 1 &&
-        tile.piece?.color === "black"
-    );
-    if (hasEnemyPieceToTheLeft) {
-      moves.push({ column: getColumnString(column - 1), row: row + 1 });
-    }
+  const moves: Position[] = [];
 
-    const hasEnemyPieceToTheRight = board.tiles.some(
-      (tile) =>
-        tile.position.column === getColumnString(column + 1) &&
-        tile.position.row === row + 1 &&
-        tile.piece?.color === "black"
-    );
-    if (hasEnemyPieceToTheRight) {
-      moves.push({ column: getColumnString(column + 1), row: row + 1 });
-    }
-  } else {
-    // if the pawn is on the first row, it can move two spaces
-    if (row === 7) {
-      moves.push({ column: getColumnString(column), row: row - 2 });
-    }
+  // TODO
 
-    // the pawn can always move one space forward
-    moves.push({ column: getColumnString(column), row: row - 1 });
+  return moves;
+};
 
-    // the pawn can move one space diagonally if there is an enemy piece there
-    const hasEnemyPieceToTheLeft = board.tiles.some(
-      (tile) =>
-        tile.position.column === getColumnString(column - 1) &&
-        tile.position.row === row - 1 &&
-        tile.piece?.color === "white"
-    );
-    if (hasEnemyPieceToTheLeft) {
-      moves.push({ column: getColumnString(column - 1), row: row - 1 });
-    }
+// given a board, and a position of a queen, return all the possible moves
+// for that queen
+const getQueenMoves = (board: Board, position: Position): Position[] => {
+  const column = getColumnNumber(position.column);
+  const row = position.row;
 
-    const hasEnemyPieceToTheRight = board.tiles.some(
-      (tile) =>
-        tile.position.column === getColumnString(column + 1) &&
-        tile.position.row === row - 1 &&
-        tile.piece?.color === "white"
-    );
-    if (hasEnemyPieceToTheRight) {
-      moves.push({ column: getColumnString(column + 1), row: row - 1 });
-    }
-  }
+  const moves: Position[] = [];
+
+  // TODO
+
+  return moves;
+};
+
+// given a board, and a position of a king, return all the possible moves
+// for that king
+const getKingMoves = (board: Board, position: Position): Position[] => {
+  const column = getColumnNumber(position.column);
+  const row = position.row;
+
+  const moves: Position[] = [];
+
+  // TODO
 
   return moves;
 };
