@@ -242,8 +242,63 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 // given a board, and a position of a knight, return all the possible moves
 // for that knight
 const getKnightMoves = (board: Board, position: Position): Position[] => {
-  // TODO: fix
-  return [];
+  const column = getColumnNumber(position.column); // 1-8
+  const row = position.row; // 1-8
+
+  const moves: Position[] = [];
+
+  // check if the board with given position has a knight
+  const piece = board.tiles.flat().find((tile) => {
+    return (
+      tile.position.column === position.column &&
+      tile.position.row === position.row
+    );
+  })?.piece;
+
+  if (!piece) {
+    return [];
+  }
+
+  const pieceType = piece.type;
+  const pieceColor = piece.color;
+
+  if (pieceType !== PieceType.Knight) {
+    return [];
+  }
+
+  const possibleMoves = [
+    { column: column + 2, row: row + 1 },
+    { column: column + 2, row: row - 1 },
+    { column: column - 2, row: row + 1 },
+    { column: column - 2, row: row - 1 },
+    { column: column + 1, row: row + 2 },
+    { column: column + 1, row: row - 2 },
+    { column: column - 1, row: row + 2 },
+    { column: column - 1, row: row - 2 },
+  ];
+
+  possibleMoves.forEach((move) => {
+    if (move.column > 0 && move.column < 9 && move.row > 0 && move.row < 9) {
+      const tile = board.tiles.flat().find((tile) => {
+        return (
+          tile.position.column === getColumnString(move.column) &&
+          tile.position.row === move.row
+        );
+      });
+
+      if (!tile) {
+        return;
+      }
+
+      if (!tile.piece) {
+        moves.push({ column: getColumnString(move.column), row: move.row });
+      } else if (tile.piece.color !== pieceColor) {
+        moves.push({ column: getColumnString(move.column), row: move.row });
+      }
+    }
+  });
+
+  return moves;
 };
 
 // given a board, and a position of a bishop, return all the possible moves
