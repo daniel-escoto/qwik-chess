@@ -1,7 +1,26 @@
 import { Board } from "~/models/Board";
-import { PieceType } from "~/models/Piece";
+import { Piece, PieceType } from "~/models/Piece";
 import { Position } from "~/models/Tile";
 import { getColumnNumber, getColumnString } from "./Board";
+
+export const getVerifiedPiece = (
+  board: Board,
+  position: Position,
+  type: PieceType
+): Piece | null => {
+  const { piece } =
+    board.tiles[position.row - 1][getColumnNumber(position.column) - 1];
+
+  if (!piece) {
+    return null;
+  }
+
+  if (piece.type !== type) {
+    return null;
+  }
+
+  return piece;
+};
 
 // given a board and a tile with a piece, return all the possible moves
 // for that piece
@@ -46,24 +65,13 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
   const moves: Position[] = [];
 
-  // check if the board with given position has a pawn
-  const piece = tiles.find((tile) => {
-    return (
-      tile.position.column === position.column &&
-      tile.position.row === position.row
-    );
-  })?.piece;
+  const piece = getVerifiedPiece(board, position, PieceType.Pawn);
 
   if (!piece) {
     return [];
   }
 
-  const pieceType = piece.type;
   const pieceColor = piece.color;
-
-  if (pieceType !== PieceType.Pawn) {
-    return [];
-  }
 
   if (pieceColor === "white") {
     // check if the pawn is on the last row
@@ -242,24 +250,13 @@ const getKnightMoves = (board: Board, position: Position): Position[] => {
 
   const moves: Position[] = [];
 
-  // check if the board with given position has a knight
-  const piece = tiles.find((tile) => {
-    return (
-      tile.position.column === position.column &&
-      tile.position.row === position.row
-    );
-  })?.piece;
+  const piece = getVerifiedPiece(board, position, PieceType.Knight);
 
   if (!piece) {
     return [];
   }
 
-  const pieceType = piece.type;
   const pieceColor = piece.color;
-
-  if (pieceType !== PieceType.Knight) {
-    return [];
-  }
 
   const possibleMoves = [
     { column: column + 2, row: row + 1 },
@@ -354,29 +351,9 @@ const getBishopMovesHelper = (board: Board, position: Position): Position[] => {
 // given a board, and a position of a bishop, return all the possible moves
 // for that bishop
 const getBishopMoves = (board: Board, position: Position): Position[] => {
-  const column = getColumnNumber(position.column); // 1-8
-  const row = position.row; // 1-8
-
-  const tiles = board.tiles.flat();
-
-  const moves: Position[] = [];
-
-  // check if the board with given position has a bishop
-  const piece = tiles.find((tile) => {
-    return (
-      tile.position.column === position.column &&
-      tile.position.row === position.row
-    );
-  })?.piece;
+  const piece = getVerifiedPiece(board, position, PieceType.Bishop);
 
   if (!piece) {
-    return [];
-  }
-
-  const pieceType = piece.type;
-  const pieceColor = piece.color;
-
-  if (pieceType !== PieceType.Bishop) {
     return [];
   }
 
@@ -451,23 +428,9 @@ const getRookMovesHelper = (board: Board, position: Position): Position[] => {
 // given a board, and a position of a rook, return all the possible moves
 // for that rook
 const getRookMoves = (board: Board, position: Position): Position[] => {
-  const tiles = board.tiles.flat();
-
-  // check if the board with given position has a rook
-  const piece = tiles.find((tile) => {
-    return (
-      tile.position.column === position.column &&
-      tile.position.row === position.row
-    );
-  })?.piece;
+  const piece = getVerifiedPiece(board, position, PieceType.Rook);
 
   if (!piece) {
-    return [];
-  }
-
-  const pieceType = piece.type;
-
-  if (pieceType !== PieceType.Rook) {
     return [];
   }
 
@@ -477,25 +440,9 @@ const getRookMoves = (board: Board, position: Position): Position[] => {
 // given a board, and a position of a queen, return all the possible moves
 // for that queen
 const getQueenMoves = (board: Board, position: Position): Position[] => {
-  const moves: Position[] = [];
-
-  const tiles = board.tiles.flat();
-
-  // check if the board with given position has a queen
-  const piece = tiles.find((tile) => {
-    return (
-      tile.position.column === position.column &&
-      tile.position.row === position.row
-    );
-  })?.piece;
+  const piece = getVerifiedPiece(board, position, PieceType.Queen);
 
   if (!piece) {
-    return [];
-  }
-
-  const pieceType = piece.type;
-
-  if (pieceType !== PieceType.Queen) {
     return [];
   }
 
@@ -516,21 +463,9 @@ const getKingMoves = (board: Board, position: Position): Position[] => {
 
   const tiles = board.tiles.flat();
 
-  // check if the board with given position has a king
-  const piece = tiles.find((tile) => {
-    return (
-      tile.position.column === position.column &&
-      tile.position.row === position.row
-    );
-  })?.piece;
+  const piece = getVerifiedPiece(board, position, PieceType.King);
 
   if (!piece) {
-    return [];
-  }
-
-  const pieceType = piece.type;
-
-  if (pieceType !== PieceType.King) {
     return [];
   }
 
