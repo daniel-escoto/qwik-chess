@@ -17,8 +17,14 @@ export default component$(() => {
   });
 
   const handleTileClick$ = $((tile: Tile) => {
-    // if a tile is selected, move the piece and clear the selection
-    // otherwise, select the tile
+    if (!state.isWhitesTurn && tile.piece?.color === "white") {
+      return;
+    }
+
+    if (state.isWhitesTurn && tile.piece?.color === "black") {
+      return;
+    }
+
     if (state.selectedTile) {
       const newBoard = movePiece(
         state.board,
@@ -27,6 +33,7 @@ export default component$(() => {
       );
       state.board = newBoard;
       state.selectedTile = null;
+      state.isWhitesTurn = !state.isWhitesTurn;
     } else {
       state.selectedTile = tile;
     }

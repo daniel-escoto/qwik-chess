@@ -68,6 +68,7 @@ export default component$(
                 />
               ))}
             </div>
+            {/* TODO: column labels */}
             <div>
               <span>{isWhitesTurn ? "White" : "Black"}'s turn</span>
             </div>
