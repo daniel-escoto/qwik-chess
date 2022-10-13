@@ -1,4 +1,5 @@
 import { component$, PropFunction } from "@builder.io/qwik";
+import { Board } from "~/models/Board";
 import { Position, Tile } from "~/models/Tile";
 import Piece from "./Piece";
 

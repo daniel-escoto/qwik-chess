@@ -526,3 +526,33 @@ const getKingMoves = (board: Board, position: Position): Position[] => {
 
   return moves;
 };
+
+// given a board, and the position of a piece, return the piece
+export const getPiece = (board: Board, position: Position): Piece | null => {
+  const column = getColumnNumber(position.column);
+  const row = position.row;
+
+  return board.tiles[row - 1][column - 1].piece;
+};
+
+// given a board, starting position, and ending position, return true if the
+// move is valid, false otherwise
+export const isValidMove = (
+  board: Board,
+  startingPosition: Position,
+  endingPosition: Position
+): boolean => {
+  const piece = getPiece(board, startingPosition);
+
+  if (!piece) {
+    return false;
+  }
+
+  const moves = getPieceMoves(board, startingPosition);
+
+  return moves.some((move) => {
+    return (
+      move.column === endingPosition.column && move.row === endingPosition.row
+    );
+  });
+};

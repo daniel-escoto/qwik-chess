@@ -3,7 +3,7 @@ import Board from "./Board";
 import { Board as BoardModel } from "~/models/Board";
 import { Tile } from "~/models/Tile";
 import { getPieceMoves } from "~/Util/Piece";
-import { generateBoard } from "~/Util/Board";
+import { generateBoard, movePiece } from "~/Util/Board";
 
 export default component$(() => {
   const state = useStore<{
@@ -15,13 +15,19 @@ export default component$(() => {
   });
 
   const handleTileClick$ = $((tile: Tile) => {
-    // set selected tile to null if the clicked tile is already selected
-    if (state.selectedTile === tile) {
+    // if a tile is selected, move the piece and clear the selection
+    // otherwise, select the tile
+    if (state.selectedTile) {
+      const newBoard = movePiece(
+        state.board,
+        state.selectedTile.position,
+        tile.position
+      );
+      state.board = newBoard;
       state.selectedTile = null;
-      return;
+    } else {
+      state.selectedTile = tile;
     }
-
-    state.selectedTile = tile;
   });
 
   const possibleMoves =

@@ -1,6 +1,8 @@
-import { Tile } from "~/models/Tile";
+import { Position, Tile } from "~/models/Tile";
 import { Piece, PieceType } from "~/models/Piece";
 import { Board } from "~/models/Board";
+import { isValidMove, getPiece } from "./Piece";
+import { getTileAtPosition } from "./Tile";
 
 // generate a board with the starting pieces in the correct positions
 // a - h are the columns, left to right
@@ -172,5 +174,31 @@ export const getColumnString = (column: number): string => {
       return "h";
     default:
       throw new Error("Invalid column");
+  }
+};
+
+// given a board, a starting position, and an ending position,
+// return a new board with the piece at the ending position
+// if the move is valid, else return the original board
+export const movePiece = (
+  board: Board,
+  start: Position,
+  end: Position
+): Board => {
+  const piece = getPiece(board, start);
+
+  if (piece && isValidMove(board, start, end)) {
+    const newBoard = { ...board };
+    const startTile = getTileAtPosition(newBoard, start);
+    const endTile = getTileAtPosition(newBoard, end);
+
+    if (startTile && endTile) {
+      startTile.piece = null;
+      endTile.piece = piece;
+    }
+
+    return newBoard;
+  } else {
+    return board;
   }
 };
