@@ -2,6 +2,7 @@ import { component$, PropFunction } from "@builder.io/qwik";
 import { Board } from "~/models/Board";
 import Tile from "./Tile";
 import { Position, Tile as TileModel } from "~/models/Tile";
+import ScoreBug from "./ScoreBug";
 
 type Props = {
   board: Board;
@@ -69,8 +70,8 @@ export default component$(
               ))}
             </div>
             {/* TODO: column labels */}
-            <div>
-              <span>{isWhitesTurn ? "White" : "Black"}'s turn</span>
+            <div className="mt-4 w-full">
+              <ScoreBug isWhitesTurn={isWhitesTurn} />
             </div>
           </div>
         </div>
