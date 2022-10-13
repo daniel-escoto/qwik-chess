@@ -7,6 +7,7 @@ type Props = {
   board: Board;
   possibleMoves: Position[];
   selectedTile: TileModel | null;
+  isWhitesTurn: boolean;
   handleTileClick$: PropFunction<(tile: TileModel) => void>;
 };
 
@@ -42,7 +43,13 @@ export function ColumnLabels() {
 }
 
 export default component$(
-  ({ board, possibleMoves, selectedTile, handleTileClick$ }: Props) => {
+  ({
+    board,
+    possibleMoves,
+    selectedTile,
+    isWhitesTurn,
+    handleTileClick$,
+  }: Props) => {
     // boardToRender is board.tiles.flat() upside down
     const boardTilesToRender = board.tiles.slice().reverse().flat();
 
@@ -50,15 +57,20 @@ export default component$(
       <div className="flex flex-col">
         <div className="flex mt-4">
           <RowLabels />
-          <div className="grid grid-cols-8 gap-0 w-96 h-96">
-            {boardTilesToRender.flat().map((tile) => (
-              <Tile
-                tile={tile}
-                possibleMoves={possibleMoves}
-                isSelected={selectedTile === tile}
-                onClick$={handleTileClick$}
-              />
-            ))}
+          <div className="flex flex-col items-center">
+            <div className="grid grid-cols-8 gap-0 w-96 h-96">
+              {boardTilesToRender.flat().map((tile) => (
+                <Tile
+                  tile={tile}
+                  possibleMoves={possibleMoves}
+                  isSelected={selectedTile === tile}
+                  onClick$={handleTileClick$}
+                />
+              ))}
+            </div>
+            <div>
+              <span>{isWhitesTurn ? "White" : "Black"}'s turn</span>
+            </div>
           </div>
         </div>
       </div>

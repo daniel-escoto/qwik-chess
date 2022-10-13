@@ -9,9 +9,11 @@ export default component$(() => {
   const state = useStore<{
     board: BoardModel;
     selectedTile: Tile | null;
+    isWhitesTurn: boolean;
   }>({
     board: generateBoard(),
     selectedTile: null,
+    isWhitesTurn: true,
   });
 
   const handleTileClick$ = $((tile: Tile) => {
@@ -41,6 +43,7 @@ export default component$(() => {
         board={state.board}
         possibleMoves={possibleMoves}
         selectedTile={state.selectedTile}
+        isWhitesTurn={state.isWhitesTurn}
         handleTileClick$={handleTileClick$}
       />
     </div>
