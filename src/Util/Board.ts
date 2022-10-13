@@ -30,6 +30,45 @@ export const generateBoard = (): Board => {
   return { tiles };
 };
 
+// generate a board with with starting pieces in the correct positions
+// but no pawns
+export const generateBoardWithoutPawns = (): Board => {
+  const tiles: Tile[][] = [];
+
+  for (let row = 1; row <= 8; row++) {
+    const rowTiles: Tile[] = [];
+
+    if (row === 2 || row === 7) {
+      for (let column = 1; column <= 8; column++) {
+        const color = (row + column) % 2 === 0 ? "white" : "black";
+        const colString = getColumnString(column);
+
+        rowTiles.push({
+          color,
+          piece: null,
+          position: { column: colString, row },
+        });
+      }
+    } else {
+      for (let column = 1; column <= 8; column++) {
+        const color = (row + column) % 2 === 0 ? "white" : "black";
+        const piece = getStartingPiece(row, column);
+        const colString = getColumnString(column);
+
+        rowTiles.push({
+          color,
+          piece,
+          position: { column: colString, row },
+        });
+      }
+    }
+
+    tiles.push(rowTiles);
+  }
+
+  return { tiles };
+};
+
 // given a row and column, return the piece that should be there
 // at the start of the game
 const getStartingPiece = (y: number, x: number): Piece | null => {

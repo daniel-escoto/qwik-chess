@@ -39,22 +39,15 @@ export const getPieceMoves = (board: Board, position: Position): Position[] => {
 // given a board, a piece color, and a position of a pawn, return all the
 // possible moves for that pawn
 const getPawnMoves = (board: Board, position: Position): Position[] => {
-  // if the pawn is white, then it can move up
-  // if the pawn is black, then it can move down
-  // if the pawn is on the starting row, then it can move 2 spaces
-  // otherwise, it can only move 1 space
-  // if the pawn is on the last row, then it cannot move forward
-  // if the pawn is on the first column, then it cannot move left
-  // if the pawn is on the last column, then it cannot move right
-  // a pawn can capture diagonally
-
   const column = getColumnNumber(position.column); // 1-8
   const row = position.row; // 1-8
+
+  const tiles = board.tiles.flat();
 
   const moves: Position[] = [];
 
   // check if the board with given position has a pawn
-  const piece = board.tiles.flat().find((tile) => {
+  const piece = tiles.find((tile) => {
     return (
       tile.position.column === position.column &&
       tile.position.row === position.row
@@ -79,7 +72,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
     }
 
     // check if the pawn can move forward 1 space
-    const forwardOneSpace = board.tiles.flat().find((tile) => {
+    const forwardOneSpace = tiles.find((tile) => {
       return (
         tile.position.column === position.column &&
         tile.position.row === row + 1
@@ -96,7 +89,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
     // check if the pawn can move forward 2 spaces
     if (row === 2) {
-      const forwardTwoSpaces = board.tiles.flat().find((tile) => {
+      const forwardTwoSpaces = tiles.find((tile) => {
         return (
           tile.position.column === position.column &&
           tile.position.row === row + 2
@@ -114,7 +107,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
     // check if the pawn can move right 1 space
     if (column < 8) {
-      const rightOneSpace = board.tiles.flat().find((tile) => {
+      const rightOneSpace = tiles.find((tile) => {
         return (
           tile.position.column === getColumnString(column + 1) &&
           tile.position.row === row + 1
@@ -135,7 +128,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
     // check if the pawn can move left 1 space
     if (column > 1) {
-      const leftOneSpace = board.tiles.flat().find((tile) => {
+      const leftOneSpace = tiles.find((tile) => {
         return (
           tile.position.column === getColumnString(column - 1) &&
           tile.position.row === row + 1
@@ -160,7 +153,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
     }
 
     // check if the pawn can move forward 1 space
-    const forwardOneSpace = board.tiles.flat().find((tile) => {
+    const forwardOneSpace = tiles.find((tile) => {
       return (
         tile.position.column === position.column &&
         tile.position.row === row - 1
@@ -177,7 +170,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
     // check if the pawn can move forward 2 spaces
     if (row === 7) {
-      const forwardTwoSpaces = board.tiles.flat().find((tile) => {
+      const forwardTwoSpaces = tiles.find((tile) => {
         return (
           tile.position.column === position.column &&
           tile.position.row === row - 2
@@ -195,7 +188,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
     // check if the pawn can move right 1 space
     if (column < 8) {
-      const rightOneSpace = board.tiles.flat().find((tile) => {
+      const rightOneSpace = tiles.find((tile) => {
         return (
           tile.position.column === getColumnString(column + 1) &&
           tile.position.row === row - 1
@@ -216,7 +209,7 @@ const getPawnMoves = (board: Board, position: Position): Position[] => {
 
     // check if the pawn can move left 1 space
     if (column > 1) {
-      const leftOneSpace = board.tiles.flat().find((tile) => {
+      const leftOneSpace = tiles.find((tile) => {
         return (
           tile.position.column === getColumnString(column - 1) &&
           tile.position.row === row - 1
@@ -245,10 +238,12 @@ const getKnightMoves = (board: Board, position: Position): Position[] => {
   const column = getColumnNumber(position.column); // 1-8
   const row = position.row; // 1-8
 
+  const tiles = board.tiles.flat();
+
   const moves: Position[] = [];
 
   // check if the board with given position has a knight
-  const piece = board.tiles.flat().find((tile) => {
+  const piece = tiles.find((tile) => {
     return (
       tile.position.column === position.column &&
       tile.position.row === position.row
@@ -279,7 +274,7 @@ const getKnightMoves = (board: Board, position: Position): Position[] => {
 
   possibleMoves.forEach((move) => {
     if (move.column > 0 && move.column < 9 && move.row > 0 && move.row < 9) {
-      const tile = board.tiles.flat().find((tile) => {
+      const tile = tiles.find((tile) => {
         return (
           tile.position.column === getColumnString(move.column) &&
           tile.position.row === move.row
@@ -301,15 +296,154 @@ const getKnightMoves = (board: Board, position: Position): Position[] => {
   return moves;
 };
 
+// helper for getBishopMoves and getQueenMoves
+const getBishopMovesHelper = (board: Board, position: Position): Position[] => {
+  const column = getColumnNumber(position.column); // 1-8
+  const row = position.row; // 1-8
+
+  const tiles = board.tiles.flat();
+
+  const moves: Position[] = [];
+  const directions = [
+    { column: 1, row: 1 },
+    { column: 1, row: -1 },
+    { column: -1, row: 1 },
+    { column: -1, row: -1 },
+  ];
+
+  directions.forEach((direction) => {
+    let currentColumn = column;
+    let currentRow = row;
+
+    while (true) {
+      currentColumn += direction.column;
+      currentRow += direction.row;
+
+      if (
+        currentColumn < 1 ||
+        currentColumn > 8 ||
+        currentRow < 1 ||
+        currentRow > 8
+      ) {
+        break;
+      }
+
+      const tile = tiles.find((tile) => {
+        return (
+          tile.position.column === getColumnString(currentColumn) &&
+          tile.position.row === currentRow
+        );
+      });
+
+      if (!tile) {
+        break;
+      }
+
+      if (!tile.piece) {
+        moves.push({ column: getColumnString(currentColumn), row: currentRow });
+      } else {
+        moves.push({ column: getColumnString(currentColumn), row: currentRow });
+        break;
+      }
+    }
+  });
+
+  return moves;
+};
+
 // given a board, and a position of a bishop, return all the possible moves
 // for that bishop
 const getBishopMoves = (board: Board, position: Position): Position[] => {
-  const column = getColumnNumber(position.column);
-  const row = position.row;
+  const column = getColumnNumber(position.column); // 1-8
+  const row = position.row; // 1-8
+
+  const tiles = board.tiles.flat();
 
   const moves: Position[] = [];
 
-  // TODO
+  // check if the board with given position has a bishop
+  const piece = tiles.find((tile) => {
+    return (
+      tile.position.column === position.column &&
+      tile.position.row === position.row
+    );
+  })?.piece;
+
+  if (!piece) {
+    return [];
+  }
+
+  const pieceType = piece.type;
+  const pieceColor = piece.color;
+
+  if (pieceType !== PieceType.Bishop) {
+    return [];
+  }
+
+  return getBishopMovesHelper(board, position);
+};
+
+// helper for getRookMoves and getQueenMoves
+const getRookMovesHelper = (board: Board, position: Position): Position[] => {
+  const column = getColumnNumber(position.column); // 1-8
+  const row = position.row; // 1-8
+
+  const pieceColor = board.tiles[row - 1][column - 1].piece?.color;
+
+  const tiles = board.tiles.flat();
+
+  const moves: Position[] = [];
+
+  const directions = [
+    { column: 1, row: 0 },
+    { column: -1, row: 0 },
+    { column: 0, row: 1 },
+    { column: 0, row: -1 },
+  ];
+
+  directions.forEach((direction) => {
+    let currentColumn = column;
+    let currentRow = row;
+
+    while (true) {
+      currentColumn += direction.column;
+      currentRow += direction.row;
+
+      if (currentColumn < 1 || currentColumn > 8) {
+        break;
+      }
+
+      if (currentRow < 1 || currentRow > 8) {
+        break;
+      }
+
+      const tile = tiles.find((tile) => {
+        return (
+          tile.position.column === getColumnString(currentColumn) &&
+          tile.position.row === currentRow
+        );
+      });
+
+      if (!tile) {
+        break;
+      }
+
+      if (!tile.piece) {
+        moves.push({
+          column: getColumnString(currentColumn),
+          row: currentRow,
+        });
+      } else if (tile.piece.color !== pieceColor) {
+        moves.push({
+          column: getColumnString(currentColumn),
+          row: currentRow,
+        });
+        break;
+      } else {
+        break;
+      }
+    }
+  });
 
   return moves;
 };
@@ -317,27 +451,59 @@ const getBishopMoves = (board: Board, position: Position): Position[] => {
 // given a board, and a position of a rook, return all the possible moves
 // for that rook
 const getRookMoves = (board: Board, position: Position): Position[] => {
-  const column = getColumnNumber(position.column);
-  const row = position.row;
+  const tiles = board.tiles.flat();
 
-  const moves: Position[] = [];
+  // check if the board with given position has a rook
+  const piece = tiles.find((tile) => {
+    return (
+      tile.position.column === position.column &&
+      tile.position.row === position.row
+    );
+  })?.piece;
 
-  // TODO
+  if (!piece) {
+    return [];
+  }
 
-  return moves;
+  const pieceType = piece.type;
+
+  if (pieceType !== PieceType.Rook) {
+    return [];
+  }
+
+  return getRookMovesHelper(board, position);
 };
 
 // given a board, and a position of a queen, return all the possible moves
 // for that queen
 const getQueenMoves = (board: Board, position: Position): Position[] => {
-  const column = getColumnNumber(position.column);
-  const row = position.row;
-
   const moves: Position[] = [];
 
-  // TODO
+  const tiles = board.tiles.flat();
 
-  return moves;
+  // check if the board with given position has a queen
+  const piece = tiles.find((tile) => {
+    return (
+      tile.position.column === position.column &&
+      tile.position.row === position.row
+    );
+  })?.piece;
+
+  if (!piece) {
+    return [];
+  }
+
+  const pieceType = piece.type;
+
+  if (pieceType !== PieceType.Queen) {
+    return [];
+  }
+
+  // queen can move like a rook and a bishop
+  return [
+    ...getRookMovesHelper(board, position),
+    ...getBishopMovesHelper(board, position),
+  ];
 };
 
 // given a board, and a position of a king, return all the possible moves
@@ -348,7 +514,77 @@ const getKingMoves = (board: Board, position: Position): Position[] => {
 
   const moves: Position[] = [];
 
-  // TODO
+  const tiles = board.tiles.flat();
+
+  // check if the board with given position has a king
+  const piece = tiles.find((tile) => {
+    return (
+      tile.position.column === position.column &&
+      tile.position.row === position.row
+    );
+  })?.piece;
+
+  if (!piece) {
+    return [];
+  }
+
+  const pieceType = piece.type;
+
+  if (pieceType !== PieceType.King) {
+    return [];
+  }
+
+  const directions = [
+    { column: 1, row: 0 },
+    { column: -1, row: 0 },
+    { column: 0, row: 1 },
+    { column: 0, row: -1 },
+    { column: 1, row: 1 },
+    { column: 1, row: -1 },
+    { column: -1, row: 1 },
+    { column: -1, row: -1 },
+  ];
+
+  directions.forEach((direction) => {
+    let currentColumn = column;
+    let currentRow = row;
+
+    currentColumn += direction.column;
+    currentRow += direction.row;
+
+    if (currentColumn < 1 || currentColumn > 8) {
+      return;
+    }
+
+    if (currentRow < 1 || currentRow > 8) {
+      return;
+    }
+
+    const tile = tiles.find((tile) => {
+      return (
+        tile.position.column === getColumnString(currentColumn) &&
+        tile.position.row === currentRow
+      );
+    });
+
+    if (!tile) {
+      return;
+    }
+
+    if (!tile.piece) {
+      moves.push({
+        column: getColumnString(currentColumn),
+        row: currentRow,
+      });
+    } else if (tile.piece.color !== piece.color) {
+      moves.push({
+        column: getColumnString(currentColumn),
+        row: currentRow,
+      });
+    }
+
+    return;
+  });
 
   return moves;
 };
