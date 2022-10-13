@@ -26,15 +26,20 @@ export default component$(() => {
       return;
     }
 
-    if (state.selectedTile) {
+    if (state.selectedTile && tile !== state.selectedTile) {
       const newBoard = movePiece(
         state.board,
         state.selectedTile.position,
         tile.position
       );
+
+      // change turn only if newBoard is different from old board
+      if (newBoard !== state.board) {
+        state.isWhitesTurn = !state.isWhitesTurn;
+      }
+
       state.board = newBoard;
       state.selectedTile = null;
-      state.isWhitesTurn = !state.isWhitesTurn;
     } else {
       state.selectedTile = tile;
     }
