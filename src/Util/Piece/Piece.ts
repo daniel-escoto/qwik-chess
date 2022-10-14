@@ -1,8 +1,8 @@
 import { Board } from "~/models/Board";
-import { CheckStatus, Piece, PieceColor, PieceType } from "~/models/Piece";
+import { Piece, PieceType } from "~/models/Piece";
 import { Position } from "~/models/Tile";
-import { getColumnNumber, getColumnString } from "../Board";
-import { getBishopMoves, getBishopMovesHelper } from "./Bishop";
+import { getColumnNumber } from "../Board";
+import { getBishopMoves } from "./Bishop";
 import { getKingMoves } from "./King";
 import { getKnightMoves } from "./Knight";
 import { getPawnMoves } from "./Pawn";

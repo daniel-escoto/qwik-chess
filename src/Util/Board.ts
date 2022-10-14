@@ -1,8 +1,7 @@
 import { Position, Tile } from "~/models/Tile";
 import { Piece, PieceColor, PieceType } from "~/models/Piece";
 import { Board } from "~/models/Board";
-import { isValidMove, getPiece } from "./Piece/Piece";
-import { getTileAtPosition } from "./Tile";
+import { isValidMove, getPiece, getPieceMoves } from "./Piece/Piece";
 
 // generate a board with the starting pieces in the correct positions
 // a - h are the columns, left to right
@@ -203,4 +202,39 @@ export const movePiece = (
   } else {
     return { board, capturedPiece: null };
   }
+};
+
+// given a board, and a color, return all tiles of that color
+export const getTilesOfColor = (board: Board, color: PieceColor): Tile[] => {
+  const tiles: Tile[] = [];
+
+  for (let row = 1; row <= 8; row++) {
+    for (let column = 1; column <= 8; column++) {
+      const tile = board.tiles[row - 1][column - 1];
+
+      if (tile.piece && tile.piece.color === color) {
+        tiles.push(tile);
+      }
+    }
+  }
+
+  return tiles;
+};
+
+// given a board, and a color, return all positions
+// that the color can move to
+export const getValidMoves = (board: Board, color: PieceColor): Position[] => {
+  const tiles = getTilesOfColor(board, color);
+
+  const positions: Position[] = [];
+
+  for (const tile of tiles) {
+    const moves = getPieceMoves(board, tile.position);
+
+    for (const move of moves) {
+      positions.push(move);
+    }
+  }
+
+  return positions;
 };
