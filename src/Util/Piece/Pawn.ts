@@ -186,5 +186,25 @@ export const getPawnMoves = (board: Board, position: Position): Position[] => {
     }
   }
 
-  return moves;
+  // filter out moves that would capture
+  // the player's own pieces
+  const filteredMoves = moves.filter((move) => {
+    const tile = tiles.find((tile) => {
+      return (
+        tile.position.column === move.column && tile.position.row === move.row
+      );
+    });
+
+    if (!tile) {
+      return false;
+    }
+
+    if (!tile.piece) {
+      return true;
+    }
+
+    return tile.piece.color !== pieceColor;
+  });
+
+  return filteredMoves;
 };
