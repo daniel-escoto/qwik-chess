@@ -7,7 +7,7 @@ import { getKingMoves } from "./King";
 import { getKnightMoves } from "./Knight";
 import { getPawnMoves } from "./Pawn";
 import { getQueenMoves } from "./Queen";
-import { getRookMoves, getRookMovesHelper } from "./Rook";
+import { getRookMoves } from "./Rook";
 
 export const getVerifiedPiece = (
   board: Board,

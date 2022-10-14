@@ -1,6 +1,6 @@
 import { Board } from "~/models/Board";
 import { PieceColor, PieceType } from "~/models/Piece";
-import { Position } from "~/models/Tile";
+import { Position, Tile } from "~/models/Tile";
 import { getColumnNumber, getColumnString, getValidMoves } from "../Board";
 import { getVerifiedPiece } from "./Piece";
 
@@ -88,18 +88,35 @@ export const getKingMoves = (board: Board, position: Position): Position[] => {
   });
 };
 
-// given a board, and a position of a king,
-// return if the king is in check
-export const isKingInCheck = (board: Board, position: Position): boolean => {
-  const piece = getVerifiedPiece(board, position, PieceType.King);
+// given a board, and a color,
+// return the tile of the king of that color
+export const getKingPosition = (board: Board, color: PieceColor): Tile => {
+  const tiles = board.tiles.flat();
 
-  if (!piece) {
-    return false;
+  const kingTile = tiles.find((tile) => {
+    return tile.piece?.type === PieceType.King && tile.piece?.color === color;
+  });
+
+  if (!kingTile) {
+    throw new Error("King not found");
+  }
+
+  return kingTile;
+};
+
+// given a board, and a color
+// return if the king is in check
+export const isKingInCheck = (board: Board, color: PieceColor): boolean => {
+  const kingTile = getKingPosition(board, color);
+  const king = kingTile.piece;
+
+  if (!king) {
+    throw new Error("King not found");
   }
 
   const opposingValidMoves = getValidMoves(
     board,
-    piece.color === PieceColor.White ? PieceColor.Black : PieceColor.White
+    king.color === PieceColor.White ? PieceColor.Black : PieceColor.White
   );
 
   const opposingValidMovesSet = new Set(
@@ -108,26 +125,21 @@ export const isKingInCheck = (board: Board, position: Position): boolean => {
     })
   );
 
-  return opposingValidMovesSet.has(`${position.column}${position.row}`);
+  return opposingValidMovesSet.has(
+    `${kingTile.position.column}${kingTile.position.row}`
+  );
 };
 
-// given a board, and a position of a king,
+// given a board, and a color of a king,
 // return if the king is in checkmate
-export const isKingInCheckmate = (
-  board: Board,
-  position: Position
-): boolean => {
-  const piece = getVerifiedPiece(board, position, PieceType.King);
+export const isKingInCheckmate = (board: Board, color: PieceColor): boolean => {
+  const kingTile = getKingPosition(board, color);
 
-  if (!piece) {
+  const kingMoves = getKingMoves(board, kingTile.position);
+
+  if (kingMoves.length > 0) {
     return false;
   }
 
-  const validMoves = getValidMoves(board, piece.color);
-
-  if (validMoves.length > 0) {
-    return false;
-  }
-
-  return isKingInCheck(board, position);
+  return isKingInCheck(board, color);
 };
