@@ -2,6 +2,7 @@ import { Board } from "~/models/Board";
 import { PieceColor, PieceType } from "~/models/Piece";
 import { Position, Tile } from "~/models/Tile";
 import { getColumnNumber, getColumnString, getValidMoves } from "../Board";
+import { getAdjacentTiles } from "../Tile";
 import { getVerifiedPiece } from "./Piece";
 
 // given a board, and a position of a king, return all the possible moves
@@ -72,20 +73,7 @@ export const getKingMoves = (board: Board, position: Position): Position[] => {
     return;
   });
 
-  const opposingValidMoves = getValidMoves(
-    board,
-    piece.color === PieceColor.White ? PieceColor.Black : PieceColor.White
-  );
-
-  const opposingValidMovesSet = new Set(
-    opposingValidMoves.map((move) => {
-      return `${move.column}${move.row}`;
-    })
-  );
-
-  return moves.filter((move) => {
-    return !opposingValidMovesSet.has(`${move.column}${move.row}`);
-  });
+  return moves;
 };
 
 // given a board, and a color,
@@ -116,18 +104,31 @@ export const isKingInCheck = (board: Board, color: PieceColor): boolean => {
 
   const opposingValidMoves = getValidMoves(
     board,
-    king.color === PieceColor.White ? PieceColor.Black : PieceColor.White
+    color === PieceColor.White ? PieceColor.Black : PieceColor.White,
+    true
   );
 
-  const opposingValidMovesSet = new Set(
-    opposingValidMoves.map((move) => {
-      return `${move.column}${move.row}`;
-    })
-  );
+  // check if opposing kings are adjacent to the king
+  const adjacentTiles = getAdjacentTiles(board, kingTile.position);
 
-  return opposingValidMovesSet.has(
-    `${kingTile.position.column}${kingTile.position.row}`
-  );
+  const adjacentOpposingKing = adjacentTiles.find((tile) => {
+    return (
+      tile.piece?.type === PieceType.King && tile.piece?.color !== king.color
+    );
+  });
+
+  if (adjacentOpposingKing) {
+    return true;
+  }
+
+  const kingPosition = {
+    column: kingTile.position.column,
+    row: kingTile.position.row,
+  } as Position;
+
+  return opposingValidMoves.some((move) => {
+    return move.column === kingPosition.column && move.row === kingPosition.row;
+  });
 };
 
 // given a board, and a color of a king,

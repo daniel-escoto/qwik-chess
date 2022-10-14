@@ -1,7 +1,8 @@
 import { Position, Tile } from "~/models/Tile";
 import { Piece, PieceColor, PieceType } from "~/models/Piece";
-import { Board } from "~/models/Board";
+import { Board, CheckStatus } from "~/models/Board";
 import { isValidMove, getPiece, getPieceMoves } from "./Piece/Piece";
+import { isKingInCheck } from "./Piece/King";
 
 // generate a board with the starting pieces in the correct positions
 // a - h are the columns, left to right
@@ -223,13 +224,17 @@ export const getTilesOfColor = (board: Board, color: PieceColor): Tile[] => {
 
 // given a board, and a color, return all positions
 // that the color can move to
-export const getValidMoves = (board: Board, color: PieceColor): Position[] => {
+export const getValidMoves = (
+  board: Board,
+  color: PieceColor,
+  excludingKing?: boolean
+): Position[] => {
   const tiles = getTilesOfColor(board, color);
 
   const positions: Position[] = [];
 
   for (const tile of tiles) {
-    const moves = getPieceMoves(board, tile.position);
+    const moves = getPieceMoves(board, tile.position, excludingKing);
 
     for (const move of moves) {
       positions.push(move);
@@ -237,4 +242,12 @@ export const getValidMoves = (board: Board, color: PieceColor): Position[] => {
   }
 
   return positions;
+};
+
+// given a board, return a check status
+export const getCheckStatus = (board: Board): CheckStatus => {
+  return {
+    whiteIsInCheck: isKingInCheck(board, PieceColor.White),
+    blackIsInCheck: isKingInCheck(board, PieceColor.Black),
+  };
 };

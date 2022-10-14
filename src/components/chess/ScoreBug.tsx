@@ -1,8 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { Piece as PieceModel, PieceColor, PieceType } from "~/models/Piece";
+import { Board as BoardModel } from "~/models/Board";
 import Piece from "./Piece";
+import { getCheckStatus } from "~/util/Board";
 
 interface Props {
+  board: BoardModel;
   isWhitesTurn: boolean;
   capturedPieces: PieceModel[];
 }
@@ -21,7 +24,7 @@ export const WhiteIndicator = component$(() => {
   return <div className="w-8 h-8 rounded-full border border-black bg-white" />;
 });
 
-export default component$(({ isWhitesTurn, capturedPieces }: Props) => {
+export default component$(({ board, isWhitesTurn, capturedPieces }: Props) => {
   const isSelectedClass = "font-bold";
   const isNotSelectedClass = "text-gray-500";
 
@@ -54,6 +57,8 @@ export default component$(({ isWhitesTurn, capturedPieces }: Props) => {
     (piece) => piece.color === PieceColor.Black
   );
 
+  const checkStatus = getCheckStatus(board);
+
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -78,6 +83,11 @@ export default component$(({ isWhitesTurn, capturedPieces }: Props) => {
           ))}
         </div>
       </div>
+      {checkStatus.blackIsInCheck || checkStatus.whiteIsInCheck ? (
+        <div className="text-2xl">
+          {checkStatus.blackIsInCheck ? "Black" : "White"} is in check
+        </div>
+      ) : null}
       <div>
         <div className="flex items-center gap-1 justify-end">
           <span className={isWhitesTurn ? isNotSelectedClass : isSelectedClass}>

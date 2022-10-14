@@ -1,6 +1,6 @@
 import { Tile, Position } from "~/models/Tile";
 import { Board } from "~/models/Board";
-import { getColumnNumber } from "./Board";
+import { getColumnNumber, getColumnString } from "./Board";
 
 // given two tiles, return true if they are the same tile
 export const isSameTile = (tile1: Tile, tile2: Tile): boolean => {
@@ -25,4 +25,31 @@ export const getTileAtPosition = (
     return null;
   }
   return tile;
+};
+
+// given a board, and a position,
+// return all adjacent and diagonal tiles
+export const getAdjacentTiles = (board: Board, position: Position): Tile[] => {
+  const tiles: Tile[] = [];
+  const row = position.row;
+  const column = getColumnNumber(position.column);
+
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      if (i === 0 && j === 0) {
+        continue;
+      }
+
+      const tile = getTileAtPosition(board, {
+        row: row + i,
+        column: getColumnString(column + j),
+      });
+
+      if (tile) {
+        tiles.push(tile);
+      }
+    }
+  }
+
+  return tiles;
 };

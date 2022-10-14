@@ -75,6 +75,7 @@ export default component$(
             <ColumnLabels />
             <div className="mt-4 w-full">
               <ScoreBug
+                board={board}
                 isWhitesTurn={isWhitesTurn}
                 capturedPieces={capturedPieces}
               />

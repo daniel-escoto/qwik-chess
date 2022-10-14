@@ -30,7 +30,11 @@ export const getVerifiedPiece = (
 
 // given a board and a tile with a piece, return all the possible moves
 // for that piece
-export const getPieceMoves = (board: Board, position: Position): Position[] => {
+export const getPieceMoves = (
+  board: Board,
+  position: Position,
+  excludingKing?: boolean
+): Position[] => {
   const piece = board.tiles.flat().find((tile) => {
     return (
       tile.position.column === position.column &&
@@ -56,7 +60,7 @@ export const getPieceMoves = (board: Board, position: Position): Position[] => {
     case PieceType.Queen:
       return getQueenMoves(board, position);
     case PieceType.King:
-      return getKingMoves(board, position);
+      return excludingKing ? [] : getKingMoves(board, position);
   }
 };
 
