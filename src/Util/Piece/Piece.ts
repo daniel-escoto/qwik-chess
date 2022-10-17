@@ -61,6 +61,9 @@ export const getPieceMoves = (
       return getQueenMoves(board, position);
     case PieceType.King:
       return excludingKing ? [] : getKingMoves(board, position);
+
+    default:
+      return [];
   }
 };
 

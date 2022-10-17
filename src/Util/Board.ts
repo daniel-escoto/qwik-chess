@@ -209,15 +209,13 @@ export const movePiece = (
 export const getTilesOfColor = (board: Board, color: PieceColor): Tile[] => {
   const tiles: Tile[] = [];
 
-  for (let row = 1; row <= 8; row++) {
-    for (let column = 1; column <= 8; column++) {
-      const tile = board.tiles[row - 1][column - 1];
-
+  board.tiles.forEach((row) => {
+    row.forEach((tile) => {
       if (tile.piece && tile.piece.color === color) {
         tiles.push(tile);
       }
-    }
-  }
+    });
+  });
 
   return tiles;
 };
@@ -233,13 +231,13 @@ export const getValidMoves = (
 
   const positions: Position[] = [];
 
-  for (const tile of tiles) {
+  tiles.forEach((tile) => {
     const moves = getPieceMoves(board, tile.position, excludingKing);
 
-    for (const move of moves) {
+    moves.forEach((move) => {
       positions.push(move);
-    }
-  }
+    });
+  });
 
   return positions;
 };
