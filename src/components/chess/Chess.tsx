@@ -76,7 +76,7 @@ export default component$(() => {
         capturedPieces={state.capturedPieces}
         handleTileClick$={handleTileClick$}
       />
-      <GameOverModal boardStatus={boardStatus} />
+      <GameOverModal board={state.board} />
     </div>
   );
 });

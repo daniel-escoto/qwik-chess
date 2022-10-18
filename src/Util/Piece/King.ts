@@ -127,9 +127,30 @@ export const isKingInCheckmate = (board: Board, color: PieceColor): boolean => {
 
   const kingMoves = getKingMoves(board, kingTile.position);
 
-  if (kingMoves.length > 0) {
+  const opposingTiles = getTilesOfColor(
+    board,
+    color === PieceColor.White ? PieceColor.Black : PieceColor.White
+  );
+
+  const opposingMoves = opposingTiles.flatMap((tile) => {
+    return getPieceMoves(board, tile.position);
+  });
+
+  // get king moves that dont overlap with opposing moves
+  const kingMovesThatDontOverlap = kingMoves.filter((kingMove) => {
+    return !opposingMoves.some((opposingMove) => {
+      return (
+        opposingMove.column === kingMove.column &&
+        opposingMove.row === kingMove.row
+      );
+    });
+  });
+
+  if (kingMovesThatDontOverlap.length > 0) {
     return false;
   }
 
-  return isKingInCheck(board, color);
+  const isInCheckMate = isKingInCheck(board, color);
+
+  return isInCheckMate;
 };

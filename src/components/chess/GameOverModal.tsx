@@ -1,17 +1,18 @@
-import { component$ } from "@builder.io/qwik";
-import { BoardStatus } from "~/models/Board";
+import { component$, useMount$ } from "@builder.io/qwik";
+import { Board, BoardStatus } from "~/models/Board";
+import { getBoardStatus } from "~/Util/Board";
 
 interface Props {
-  boardStatus: BoardStatus;
+  board: Board;
 }
 
-export default component$(({ boardStatus }: Props) => {
+export default component$(({ board }: Props) => {
+  const boardStatus = getBoardStatus(board);
+
   if (boardStatus === BoardStatus.InPlay) {
     return null;
   }
 
-  // entire screen has a dark overlay
-  // modal is centered on screen
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-4 rounded-lg flex flex-col items-center">
