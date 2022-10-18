@@ -1,6 +1,6 @@
 import { Tile, Position } from "~/models/Tile";
 import { Board } from "~/models/Board";
-import { getColumnNumber, getColumnString } from "./Board";
+import { getColumnNumber, getColumnString, getLegalMoves } from "./Board";
 
 // given two tiles, return true if they are the same tile
 export const isSameTile = (tile1: Tile, tile2: Tile): boolean => {
@@ -52,4 +52,26 @@ export const getAdjacentTiles = (board: Board, position: Position): Tile[] => {
   }
 
   return tiles;
+};
+
+// given a board, and a position,
+// return all legal moves from that position
+export const getLegalMovesFromPosition = (
+  board: Board,
+  position: Position
+): Position[] => {
+  const tile = getTileAtPosition(board, position);
+  const piece = tile?.piece;
+  if (!piece) {
+    return [];
+  }
+
+  const legalMoves = getLegalMoves(board, piece.color, true);
+
+  return legalMoves
+    .filter(
+      (move) =>
+        move.from.column === position.column && move.from.row === position.row
+    )
+    .map((move) => move.to);
 };

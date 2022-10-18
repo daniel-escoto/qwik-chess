@@ -3,6 +3,7 @@ import { Piece, PieceColor, PieceType } from "~/models/Piece";
 import { Board, CheckStatus } from "~/models/Board";
 import { isValidMove, getPiece, getPieceMoves } from "./Piece/Piece";
 import { isKingInCheck } from "./Piece/King";
+import { getTileAtPosition } from "./Tile";
 
 // generate a board with the starting pieces in the correct positions
 // a - h are the columns, left to right
@@ -23,6 +24,35 @@ export const generateBoard = (): Board => {
         color,
         piece,
         position: { column: colString, row },
+      });
+    }
+
+    tiles.push(rowTiles);
+  }
+
+  return { tiles };
+};
+
+// given a board, generate a new copy of the board
+export const cloneBoard = (board: Board): Board => {
+  const tiles: Tile[][] = [];
+
+  for (let row = 1; row <= 8; row++) {
+    const rowTiles: Tile[] = [];
+
+    for (let column = 1; column <= 8; column++) {
+      const tile = getTileAtPosition(board, {
+        row,
+        column: getColumnString(column),
+      });
+      if (!tile) {
+        throw new Error("Invalid board");
+      }
+
+      rowTiles.push({
+        color: tile.color,
+        piece: tile.piece ? { ...tile.piece } : null,
+        position: { ...tile.position },
       });
     }
 
@@ -181,6 +211,7 @@ export const getColumnString = (column: number): string => {
 // return a new board with the piece at the ending position
 // if the move is valid, else return the original board
 // also if a piece is captured, return the captured piece
+// ensure the original board is not mutated
 export const movePiece = (
   board: Board,
   start: Position,
@@ -189,10 +220,11 @@ export const movePiece = (
   board: Board;
   capturedPiece: Piece | null;
 } => {
+  const newBoard = cloneBoard(board);
+
   const piece = getPiece(board, start);
 
   if (piece && isValidMove(board, start, end)) {
-    const newBoard = { ...board };
     const capturedPiece = getPiece(newBoard, end);
 
     newBoard.tiles[end.row - 1][getColumnNumber(end.column) - 1].piece = piece;
@@ -220,26 +252,43 @@ export const getTilesOfColor = (board: Board, color: PieceColor): Tile[] => {
   return tiles;
 };
 
-// given a board, and a color, return all positions
-// that the color can move to
-export const getValidMoves = (
+// given a board, and a color, return all tiles of that color
+// that the color can move to (psuedo-legal moves)
+// return {from: Position, to: Position}[]
+export const getPsuedoLegalMoves = (
   board: Board,
   color: PieceColor,
   excludingKing?: boolean
-): Position[] => {
+): { from: Position; to: Position }[] => {
+  const moves: { from: Position; to: Position }[] = [];
   const tiles = getTilesOfColor(board, color);
 
-  const positions: Position[] = [];
-
   tiles.forEach((tile) => {
-    const moves = getPieceMoves(board, tile.position, excludingKing);
+    const tileMoves = getPieceMoves(board, tile.position, excludingKing);
 
-    moves.forEach((move) => {
-      positions.push(move);
+    tileMoves.forEach((move) => {
+      moves.push({ from: tile.position, to: move });
     });
   });
 
-  return positions;
+  return moves;
+};
+
+// given a board, and a color, return all tiles of that color
+// that the color can move to (legal moves)
+export const getLegalMoves = (
+  board: Board,
+  color: PieceColor,
+  excludingKing?: boolean
+): { from: Position; to: Position }[] => {
+  const moves = getPsuedoLegalMoves(board, color, excludingKing);
+
+  console.log("moves", moves);
+
+  return moves.filter((move) => {
+    const { board: newBoard } = movePiece(board, move.from, move.to);
+    return !isKingInCheck(newBoard, color);
+  });
 };
 
 // given a board, return a check status

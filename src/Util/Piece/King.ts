@@ -1,9 +1,12 @@
 import { Board } from "~/models/Board";
 import { PieceColor, PieceType } from "~/models/Piece";
 import { Position, Tile } from "~/models/Tile";
-import { getColumnNumber, getColumnString, getValidMoves } from "../Board";
+import { getColumnNumber, getColumnString } from "../Board";
 import { getAdjacentTiles } from "../Tile";
 import { getVerifiedPiece } from "./Piece";
+import { getKnightMovesHelper } from "./Knight";
+import { getBishopMovesHelper } from "./Bishop";
+import { getRookMovesHelper } from "./Rook";
 
 // given a board, and a position of a king, return all the possible moves
 // for that king
@@ -102,12 +105,6 @@ export const isKingInCheck = (board: Board, color: PieceColor): boolean => {
     throw new Error("King not found");
   }
 
-  const opposingValidMoves = getValidMoves(
-    board,
-    color === PieceColor.White ? PieceColor.Black : PieceColor.White,
-    true
-  );
-
   // check if opposing kings are adjacent to the king
   const adjacentTiles = getAdjacentTiles(board, kingTile.position);
 
@@ -121,14 +118,78 @@ export const isKingInCheck = (board: Board, color: PieceColor): boolean => {
     return true;
   }
 
-  const kingPosition = {
-    column: kingTile.position.column,
-    row: kingTile.position.row,
-  } as Position;
+  // check for attacking pawns
+  const rowAhead =
+    king.color === PieceColor.White
+      ? kingTile.position.row + 1
+      : kingTile.position.row - 1;
+  const leftColumn = getColumnNumber(kingTile.position.column) - 1;
+  const rightColumn = getColumnNumber(kingTile.position.column) + 1;
 
-  return opposingValidMoves.some((move) => {
-    return move.column === kingPosition.column && move.row === kingPosition.row;
+  const leftDiagonalTile = board.tiles[rowAhead]?.[leftColumn];
+  const rightDiagonalTile = board.tiles[rowAhead]?.[rightColumn];
+
+  if (
+    leftDiagonalTile?.piece?.type === PieceType.Pawn &&
+    leftDiagonalTile.piece.color !== king.color
+  ) {
+    return true;
+  }
+
+  if (
+    rightDiagonalTile?.piece?.type === PieceType.Pawn &&
+    rightDiagonalTile.piece.color !== king.color
+  ) {
+    return true;
+  }
+
+  // check for attacking knights
+  const knightPositions = getKnightMovesHelper(board, kingTile.position);
+
+  const knightAttackingKing = knightPositions.find((position) => {
+    const tile = board.tiles[position.row]?.[getColumnNumber(position.column)];
+    return (
+      tile?.piece?.type === PieceType.Knight && tile.piece.color !== king.color
+    );
   });
+
+  if (knightAttackingKing) {
+    return true;
+  }
+
+  // check for attacking bishops and queens
+  const bishopPositions = getBishopMovesHelper(board, kingTile.position);
+
+  const bishopAttackingKing = bishopPositions.find((position) => {
+    const tile = board.tiles[position.row]?.[getColumnNumber(position.column)];
+    return (
+      (tile?.piece?.type === PieceType.Bishop ||
+        tile?.piece?.type === PieceType.Queen) &&
+      tile.piece.color !== king.color
+    );
+  });
+
+  if (bishopAttackingKing) {
+    return true;
+  }
+
+  // check for attacking rooks and queens
+  const rookPositions = getRookMovesHelper(board, kingTile.position);
+
+  const rookAttackingKing = rookPositions.find((position) => {
+    const tile = board.tiles[position.row]?.[getColumnNumber(position.column)];
+    return (
+      (tile?.piece?.type === PieceType.Rook ||
+        tile?.piece?.type === PieceType.Queen) &&
+      tile.piece.color !== king.color
+    );
+  });
+
+  if (rookAttackingKing) {
+    return true;
+  }
+
+  return false;
 };
 
 // given a board, and a color of a king,

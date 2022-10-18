@@ -4,26 +4,18 @@ import { Position } from "~/models/Tile";
 import { getColumnNumber, getColumnString } from "../Board";
 import { getVerifiedPiece } from "./Piece";
 
-// given a board, and a position of a knight, return all the possible moves
-// for that knight
-export const getKnightMoves = (
+export const getKnightMovesHelper = (
   board: Board,
   position: Position
 ): Position[] => {
+  const moves: Position[] = [];
+
   const column = getColumnNumber(position.column); // 1-8
   const row = position.row; // 1-8
 
+  const pieceColor = board.tiles[row - 1][column - 1].piece?.color;
+
   const tiles = board.tiles.flat();
-
-  const moves: Position[] = [];
-
-  const piece = getVerifiedPiece(board, position, PieceType.Knight);
-
-  if (!piece) {
-    return [];
-  }
-
-  const pieceColor = piece.color;
 
   const possibleMoves = [
     { column: column + 2, row: row + 1 },
@@ -58,4 +50,19 @@ export const getKnightMoves = (
   });
 
   return moves;
+};
+
+// given a board, and a position of a knight, return all the possible moves
+// for that knight
+export const getKnightMoves = (
+  board: Board,
+  position: Position
+): Position[] => {
+  const piece = getVerifiedPiece(board, position, PieceType.Knight);
+
+  if (!piece) {
+    return [];
+  }
+
+  return getKnightMovesHelper(board, position);
 };
