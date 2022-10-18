@@ -283,8 +283,6 @@ export const getLegalMoves = (
 ): { from: Position; to: Position }[] => {
   const moves = getPsuedoLegalMoves(board, color, excludingKing);
 
-  console.log("moves", moves);
-
   return moves.filter((move) => {
     const { board: newBoard } = movePiece(board, move.from, move.to);
     return !isKingInCheck(newBoard, color);

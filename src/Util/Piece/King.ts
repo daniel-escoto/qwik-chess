@@ -157,15 +157,13 @@ export const isKingInCheck = (board: Board, color: PieceColor): boolean => {
     return true;
   }
 
-  // check for attacking bishops and queens
+  // check for attacking bishops
   const bishopPositions = getBishopMovesHelper(board, kingTile.position);
 
   const bishopAttackingKing = bishopPositions.find((position) => {
     const tile = board.tiles[position.row]?.[getColumnNumber(position.column)];
     return (
-      (tile?.piece?.type === PieceType.Bishop ||
-        tile?.piece?.type === PieceType.Queen) &&
-      tile.piece.color !== king.color
+      tile?.piece?.type === PieceType.Bishop && tile.piece.color !== king.color
     );
   });
 
@@ -173,19 +171,31 @@ export const isKingInCheck = (board: Board, color: PieceColor): boolean => {
     return true;
   }
 
-  // check for attacking rooks and queens
+  // check for attacking rooks
   const rookPositions = getRookMovesHelper(board, kingTile.position);
 
   const rookAttackingKing = rookPositions.find((position) => {
     const tile = board.tiles[position.row]?.[getColumnNumber(position.column)];
     return (
-      (tile?.piece?.type === PieceType.Rook ||
-        tile?.piece?.type === PieceType.Queen) &&
-      tile.piece.color !== king.color
+      tile?.piece?.type === PieceType.Rook && tile.piece.color !== king.color
     );
   });
 
   if (rookAttackingKing) {
+    return true;
+  }
+
+  // check for attacking queens
+  const queenPositions = [...bishopPositions, ...rookPositions];
+
+  const queenAttackingKing = queenPositions.find((position) => {
+    const tile = board.tiles[position.row]?.[getColumnNumber(position.column)];
+    return (
+      tile?.piece?.type === PieceType.Queen && tile.piece.color !== king.color
+    );
+  });
+
+  if (queenAttackingKing) {
     return true;
   }
 
