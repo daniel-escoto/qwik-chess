@@ -5,6 +5,7 @@ import { Tile } from "~/models/Tile";
 import { generateBoard, movePiece, getBoardStatus } from "~/Util/Board";
 import { PieceColor, Piece } from "~/models/Piece";
 import { getLegalMovesFromPosition } from "~/Util/Tile";
+import GameOverModal from "./GameOverModal";
 
 export default component$(() => {
   const state = useStore<{
@@ -66,7 +67,7 @@ export default component$(() => {
       : [];
 
   return (
-    <div className="flex justify-center mt-12 h-screen">
+    <div className="flex justify-center mt-12 h-screen relative">
       <Board
         board={state.board}
         possibleMoves={possibleMoves}
@@ -75,6 +76,7 @@ export default component$(() => {
         capturedPieces={state.capturedPieces}
         handleTileClick$={handleTileClick$}
       />
+      <GameOverModal boardStatus={boardStatus} />
     </div>
   );
 });

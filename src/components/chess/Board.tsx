@@ -1,9 +1,9 @@
-import { component$, PropFunction } from "@builder.io/qwik";
+import { $, component$, PropFunction, useStore } from "@builder.io/qwik";
 import { Board } from "~/models/Board";
 import Tile from "./Tile";
 import { Position, Tile as TileModel } from "~/models/Tile";
 import ScoreBug from "./ScoreBug";
-import { Piece } from "~/models/Piece";
+import { Piece, PieceColor } from "~/models/Piece";
 
 type Props = {
   board: Board;
@@ -12,6 +12,10 @@ type Props = {
   isWhitesTurn: boolean;
   capturedPieces: Piece[];
   handleTileClick$: PropFunction<(tile: TileModel) => void>;
+};
+
+type BoardState = {
+  displaySide: PieceColor;
 };
 
 export function RowLabel({ row }: { row: number }) {
@@ -53,16 +57,49 @@ export default component$(
     capturedPieces,
     handleTileClick$,
   }: Props) => {
+    const state = useStore<BoardState>({ displaySide: PieceColor.White });
+
+    const toggleDisplaySide$ = $(() => {
+      state.displaySide =
+        state.displaySide === PieceColor.White
+          ? PieceColor.Black
+          : PieceColor.White;
+    });
+
     // boardToRender is board.tiles.flat() upside down
-    const boardTilesToRender = board.tiles.slice().reverse().flat();
+    // const boardTilesToRender = board.tiles.slice().reverse().flat();
+    const boardTilesToRender =
+      state.displaySide === PieceColor.White
+        ? board.tiles.slice().reverse().flat()
+        : board.tiles.flat();
 
     return (
-      <div className="flex flex-col">
-        <div className="flex mt-4">
+      <div className="flex flex-col mt-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-1">
+            <button
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+              onClick$={() => {
+                window.location.reload();
+              }}
+            >
+              <span>New Game</span>
+            </button>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+              onClick$={toggleDisplaySide$}
+            >
+              <span>Flip Board</span>
+            </button>
+          </div>
+        </div>
+        <div className="flex">
           <RowLabels />
           <div className="flex flex-col items-center">
             <div className="grid grid-cols-8 gap-0 w-96 h-96">
-              {boardTilesToRender.flat().map((tile) => (
+              {boardTilesToRender.map((tile) => (
                 <Tile
                   tile={tile}
                   possibleMoves={possibleMoves}
