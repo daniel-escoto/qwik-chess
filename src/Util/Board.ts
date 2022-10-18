@@ -1,8 +1,8 @@
 import { Position, Tile } from "~/models/Tile";
 import { Piece, PieceColor, PieceType } from "~/models/Piece";
-import { Board, CheckStatus } from "~/models/Board";
+import { Board, CheckStatus, BoardStatus } from "~/models/Board";
 import { isValidMove, getPiece, getPieceMoves } from "./Piece/Piece";
-import { isKingInCheck } from "./Piece/King";
+import { isKingInCheck, isKingInCheckmate } from "./Piece/King";
 import { getTileAtPosition } from "./Tile";
 
 // generate a board with the starting pieces in the correct positions
@@ -289,6 +289,13 @@ export const getLegalMoves = (
   });
 };
 
+// given a board and a color, return true if the color is in a stalemate
+export const isStalemate = (board: Board, color: PieceColor): boolean => {
+  return (
+    getLegalMoves(board, color).length === 0 && !isKingInCheck(board, color)
+  );
+};
+
 // given a board, return a check status
 export const getCheckStatus = (board: Board): CheckStatus => {
   const checkStatus = {
@@ -297,4 +304,24 @@ export const getCheckStatus = (board: Board): CheckStatus => {
   };
 
   return checkStatus;
+};
+
+// given a board, return a board status
+export const getBoardStatus = (board: Board): BoardStatus => {
+  if (isStalemate(board, PieceColor.White)) {
+    return BoardStatus.Stalemate;
+  }
+  if (isStalemate(board, PieceColor.Black)) {
+    return BoardStatus.Stalemate;
+  }
+
+  if (isKingInCheckmate(board, PieceColor.White)) {
+    return BoardStatus.BlackWins;
+  }
+
+  if (isKingInCheckmate(board, PieceColor.Black)) {
+    return BoardStatus.WhiteWins;
+  }
+
+  return BoardStatus.InPlay;
 };

@@ -1,8 +1,8 @@
 import { $, component$, useStore } from "@builder.io/qwik";
 import Board from "./Board";
-import { Board as BoardModel } from "~/models/Board";
+import { Board as BoardModel, BoardStatus } from "~/models/Board";
 import { Tile } from "~/models/Tile";
-import { generateBoard, movePiece } from "~/Util/Board";
+import { generateBoard, movePiece, getBoardStatus } from "~/Util/Board";
 import { PieceColor, Piece } from "~/models/Piece";
 import { getLegalMovesFromPosition } from "~/Util/Tile";
 
@@ -19,7 +19,14 @@ export default component$(() => {
     capturedPieces: [],
   });
 
+  const boardStatus = getBoardStatus(state.board);
+  const gameIsOver = boardStatus !== BoardStatus.InPlay;
+
   const handleTileClick$ = $((tile: Tile) => {
+    if (gameIsOver) {
+      return;
+    }
+
     if (!state.selectedTile) {
       if (!state.isWhitesTurn && tile.piece?.color === PieceColor.White) {
         return;

@@ -69,22 +69,28 @@ export default component$(({ board, isWhitesTurn, capturedPieces }: Props) => {
           </span>
         </div>
         <div className="flex items-center">
-          {blackCapturedPieces.map((piece) => (
-            <div className="flex items-center">
-              <div className="w-8 h-8 relative">
-                <Piece {...piece} />
-              </div>
-              {piece.count > 1 && (
-                <div className="self-end">
-                  <span className="text-xs">x{piece.count}</span>
+          {blackCapturedPieces.length > 0 ? (
+            blackCapturedPieces.map((piece) => (
+              <div className="flex items-center">
+                <div className="w-8 h-8 relative">
+                  <Piece {...piece} />
                 </div>
-              )}
+                {piece.count > 1 && (
+                  <div className="self-end">
+                    <span className="text-xs">x{piece.count}</span>
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="flex items-center">
+              <div className="w-8 h-8 relative" />
             </div>
-          ))}
+          )}
         </div>
       </div>
       {checkStatus.blackIsInCheck || checkStatus.whiteIsInCheck ? (
-        <div className="text-2xl">
+        <div className="font-bold">
           {checkStatus.blackIsInCheck ? "Black" : "White"} is in check
         </div>
       ) : null}
@@ -96,18 +102,24 @@ export default component$(({ board, isWhitesTurn, capturedPieces }: Props) => {
           <BlackIndicator />
         </div>
         <div className="flex items-center justify-end">
-          {whiteCapturedPieces.map((piece) => (
-            <div className="flex items-center">
-              <div className="w-8 h-8 relative">
-                <Piece {...piece} />
-              </div>
-              {piece.count > 1 && (
-                <div className="self-end">
-                  <span className="text-xs">x{piece.count}</span>
+          {whiteCapturedPieces.length > 0 ? (
+            whiteCapturedPieces.map((piece) => (
+              <div className="flex items-center">
+                <div className="w-8 h-8 relative">
+                  <Piece {...piece} />
                 </div>
-              )}
+                {piece.count > 1 && (
+                  <div className="self-end">
+                    <span className="text-xs">x{piece.count}</span>
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="flex items-center">
+              <div className="w-8 h-8 relative" />
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
