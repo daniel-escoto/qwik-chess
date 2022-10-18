@@ -291,8 +291,10 @@ export const getLegalMoves = (
 
 // given a board, return a check status
 export const getCheckStatus = (board: Board): CheckStatus => {
-  return {
+  const checkStatus = {
     whiteIsInCheck: isKingInCheck(board, PieceColor.White),
     blackIsInCheck: isKingInCheck(board, PieceColor.Black),
   };
+
+  return checkStatus;
 };
