@@ -219,10 +219,13 @@ export const movePiece = (
 ): {
   board: Board;
   capturedPiece: Piece | null;
+  enPassantTile: Tile | null;
 } => {
   const newBoard = cloneBoard(board);
 
   const piece = getPiece(board, start);
+
+  const enPassantTile = getEnPassantTile(board, start, end);
 
   if (piece && isValidMove(board, start, end)) {
     const capturedPiece = getPiece(newBoard, end);
@@ -231,9 +234,9 @@ export const movePiece = (
     newBoard.tiles[start.row - 1][getColumnNumber(start.column) - 1].piece =
       null;
 
-    return { board: newBoard, capturedPiece };
+    return { board: newBoard, capturedPiece, enPassantTile };
   } else {
-    return { board, capturedPiece: null };
+    return { board, capturedPiece: null, enPassantTile: null };
   }
 };
 
@@ -258,13 +261,19 @@ export const getTilesOfColor = (board: Board, color: PieceColor): Tile[] => {
 export const getPsuedoLegalMoves = (
   board: Board,
   color: PieceColor,
-  excludingKing?: boolean
+  excludingKing?: boolean,
+  enPassantTile: Tile | null = null
 ): { from: Position; to: Position }[] => {
   const moves: { from: Position; to: Position }[] = [];
   const tiles = getTilesOfColor(board, color);
 
   tiles.forEach((tile) => {
-    const tileMoves = getPieceMoves(board, tile.position, excludingKing);
+    const tileMoves = getPieceMoves(
+      board,
+      tile.position,
+      excludingKing,
+      enPassantTile
+    );
 
     tileMoves.forEach((move) => {
       moves.push({ from: tile.position, to: move });
@@ -279,9 +288,10 @@ export const getPsuedoLegalMoves = (
 export const getLegalMoves = (
   board: Board,
   color: PieceColor,
-  excludingKing?: boolean
+  excludingKing?: boolean,
+  enPassantTile: Tile | null = null
 ): { from: Position; to: Position }[] => {
-  const moves = getPsuedoLegalMoves(board, color, excludingKing);
+  const moves = getPsuedoLegalMoves(board, color, excludingKing, enPassantTile);
 
   return moves.filter((move) => {
     const { board: newBoard } = movePiece(board, move.from, move.to);
@@ -324,4 +334,28 @@ export const getBoardStatus = (board: Board): BoardStatus => {
   }
 
   return BoardStatus.InPlay;
+};
+
+// given a board, a before position, and an after position,
+// return an en passant tile if the move is an en passant move
+// else, return null
+export const getEnPassantTile = (
+  beforeBoard: Board,
+  beforePosition: Position,
+  afterPosition: Position
+): Tile | null => {
+  const beforePiece = getPiece(beforeBoard, beforePosition);
+  if (!beforePiece || beforePiece.type !== PieceType.Pawn) {
+    return null;
+  }
+
+  // if the pawn moved two spaces, return the tile it jumped over
+  if (Math.abs(beforePosition.row - afterPosition.row) === 2) {
+    const row =
+      beforePosition.row + (afterPosition.row - beforePosition.row) / 2;
+    const column = beforePosition.column;
+    return beforeBoard.tiles[row - 1][getColumnNumber(column) - 1];
+  }
+
+  return null;
 };

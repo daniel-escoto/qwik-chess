@@ -58,7 +58,8 @@ export const getAdjacentTiles = (board: Board, position: Position): Tile[] => {
 // return all legal moves from that position
 export const getLegalMovesFromPosition = (
   board: Board,
-  position: Position
+  position: Position,
+  enPassantTile: Tile | null = null
 ): Position[] => {
   const tile = getTileAtPosition(board, position);
   const piece = tile?.piece;
@@ -66,7 +67,7 @@ export const getLegalMovesFromPosition = (
     return [];
   }
 
-  const legalMoves = getLegalMoves(board, piece.color, true);
+  const legalMoves = getLegalMoves(board, piece.color, true, enPassantTile);
 
   return legalMoves
     .filter(

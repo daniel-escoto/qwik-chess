@@ -1,6 +1,6 @@
 import { Board } from "~/models/Board";
 import { Piece, PieceType } from "~/models/Piece";
-import { Position } from "~/models/Tile";
+import { Position, Tile } from "~/models/Tile";
 import { getColumnNumber } from "../Board";
 import { getBishopMoves } from "./Bishop";
 import { getKingMoves } from "./King";
@@ -33,7 +33,8 @@ export const getVerifiedPiece = (
 export const getPieceMoves = (
   board: Board,
   position: Position,
-  excludingKing?: boolean
+  excludingKing?: boolean,
+  enPassantTile: Tile | null = null
 ): Position[] => {
   const piece = board.tiles.flat().find((tile) => {
     return (
@@ -50,7 +51,7 @@ export const getPieceMoves = (
 
   switch (pieceType) {
     case PieceType.Pawn:
-      return getPawnMoves(board, position);
+      return getPawnMoves(board, position, enPassantTile);
     case PieceType.Knight:
       return getKnightMoves(board, position);
     case PieceType.Bishop:

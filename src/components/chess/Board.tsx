@@ -96,7 +96,7 @@ export default component$(
           <RowLabels />
           <div className="flex flex-col items-center">
             <div className="grid grid-cols-8 gap-0 w-96 h-96">
-              {boardTilesToRender.reverse().map((tile, index) => (
+              {boardTilesToRender.map((tile, index) => (
                 <Tile
                   key={index}
                   tile={tile}

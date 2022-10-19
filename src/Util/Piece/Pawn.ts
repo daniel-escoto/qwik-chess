@@ -1,12 +1,16 @@
 import { Board } from "~/models/Board";
 import { PieceType, PieceColor } from "~/models/Piece";
-import { Position } from "~/models/Tile";
+import { Position, Tile } from "~/models/Tile";
 import { getColumnNumber, getColumnString } from "../Board";
 import { getVerifiedPiece } from "./Piece";
 
 // given a board, a piece color, and a position of a pawn, return all the
 // possible moves for that pawn
-export const getPawnMoves = (board: Board, position: Position): Position[] => {
+export const getPawnMoves = (
+  board: Board,
+  position: Position,
+  enPassantTile: Tile | null = null
+): Position[] => {
   const column = getColumnNumber(position.column); // 1-8
   const row = position.row; // 1-8
 
@@ -205,6 +209,42 @@ export const getPawnMoves = (board: Board, position: Position): Position[] => {
 
     return tile.piece.color !== pieceColor;
   });
+
+  // check if the pawn can capture en passant
+  if (enPassantTile) {
+    const enPassantColumn = getColumnNumber(enPassantTile.position.column);
+    const enPassantRow = enPassantTile.position.row;
+
+    if (pieceColor === PieceColor.White) {
+      if (enPassantRow === row + 1) {
+        if (enPassantColumn === column + 1) {
+          filteredMoves.push({
+            column: getColumnString(column + 1),
+            row: row + 1,
+          });
+        } else if (enPassantColumn === column - 1) {
+          filteredMoves.push({
+            column: getColumnString(column - 1),
+            row: row + 1,
+          });
+        }
+      }
+    } else {
+      if (enPassantRow === row - 1) {
+        if (enPassantColumn === column + 1) {
+          filteredMoves.push({
+            column: getColumnString(column + 1),
+            row: row - 1,
+          });
+        } else if (enPassantColumn === column - 1) {
+          filteredMoves.push({
+            column: getColumnString(column - 1),
+            row: row - 1,
+          });
+        }
+      }
+    }
+  }
 
   return filteredMoves;
 };

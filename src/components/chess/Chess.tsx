@@ -13,11 +13,13 @@ export default component$(() => {
     selectedTile: Tile | null;
     isWhitesTurn: boolean;
     capturedPieces: Piece[];
+    enPassantTile: Tile | null;
   }>({
     board: generateBoard(),
     selectedTile: null,
     isWhitesTurn: true,
     capturedPieces: [],
+    enPassantTile: null,
   });
 
   const boardStatus = getBoardStatus(state.board);
@@ -39,15 +41,16 @@ export default component$(() => {
     }
 
     if (state.selectedTile && tile !== state.selectedTile) {
-      const { board: newBoard, capturedPiece } = movePiece(
-        state.board,
-        state.selectedTile.position,
-        tile.position
-      );
+      const {
+        board: newBoard,
+        capturedPiece,
+        enPassantTile,
+      } = movePiece(state.board, state.selectedTile.position, tile.position);
 
       // change turn only if newBoard is different from old board
       if (newBoard !== state.board) {
         state.isWhitesTurn = !state.isWhitesTurn;
+        state.enPassantTile = enPassantTile;
 
         if (capturedPiece) {
           state.capturedPieces.push(capturedPiece);
@@ -63,7 +66,11 @@ export default component$(() => {
 
   const possibleMoves =
     state.selectedTile && state.board
-      ? getLegalMovesFromPosition(state.board, state.selectedTile.position)
+      ? getLegalMovesFromPosition(
+          state.board,
+          state.selectedTile.position,
+          state.enPassantTile
+        )
       : [];
 
   return (
