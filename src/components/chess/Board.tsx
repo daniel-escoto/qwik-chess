@@ -60,18 +60,15 @@ export default component$(
     const state = useStore<BoardState>({ displaySide: PieceColor.White });
 
     const toggleDisplaySide$ = $(() => {
-      state.displaySide =
+      const newSide =
         state.displaySide === PieceColor.White
           ? PieceColor.Black
           : PieceColor.White;
+
+      state.displaySide = newSide;
     });
 
-    // boardToRender is board.tiles.flat() upside down
-    // const boardTilesToRender = board.tiles.slice().reverse().flat();
-    const boardTilesToRender =
-      state.displaySide === PieceColor.White
-        ? board.tiles.slice().reverse().flat()
-        : board.tiles.flat();
+    const boardTilesToRender = board.tiles.slice().reverse().flat();
 
     return (
       <div className="flex flex-col mt-4">
@@ -99,8 +96,9 @@ export default component$(
           <RowLabels />
           <div className="flex flex-col items-center">
             <div className="grid grid-cols-8 gap-0 w-96 h-96">
-              {boardTilesToRender.map((tile) => (
+              {boardTilesToRender.reverse().map((tile, index) => (
                 <Tile
+                  key={index}
                   tile={tile}
                   possibleMoves={possibleMoves}
                   isSelected={selectedTile === tile}
@@ -108,7 +106,6 @@ export default component$(
                 />
               ))}
             </div>
-            {/* TODO: column labels */}
             <ColumnLabels />
             <div className="mt-4 w-full">
               <ScoreBug
