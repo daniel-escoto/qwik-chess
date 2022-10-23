@@ -26,20 +26,30 @@ export function RowLabel({ row }: { row: number }) {
   );
 }
 
-export function RowLabels() {
+export function RowLabels({ displaySide }: { displaySide: PieceColor }) {
+  const labels =
+    displaySide === PieceColor.White
+      ? [7, 6, 5, 4, 3, 2, 1, 0]
+      : [0, 1, 2, 3, 4, 5, 6, 7];
+
   return (
     <div className="flex flex-col">
-      {[7, 6, 5, 4, 3, 2, 1, 0].map((row) => (
+      {labels.map((row) => (
         <RowLabel row={row} />
       ))}
     </div>
   );
 }
 
-export function ColumnLabels() {
+export function ColumnLabels({ displaySide }: { displaySide: PieceColor }) {
+  const labels =
+    displaySide === PieceColor.White
+      ? ["A", "B", "C", "D", "E", "F", "G", "H"]
+      : ["H", "G", "F", "E", "D", "C", "B", "A"];
+
   return (
     <div className="grid grid-cols-8 gap-0">
-      {["A", "B", "C", "D", "E", "F", "G", "H"].map((letter) => (
+      {labels.map((letter) => (
         <div className="w-12 h-12 flex justify-center items-center">
           <span className="text-2xl">{letter}</span>
         </div>
@@ -93,7 +103,7 @@ export default component$(
           </div>
         </div>
         <div className="flex">
-          <RowLabels />
+          <RowLabels displaySide={state.displaySide} />
           <div className="flex flex-col items-center">
             <div className="grid grid-cols-8 gap-0 w-96 h-96">
               {boardTilesToRender.map((tile, index) => (
@@ -106,7 +116,7 @@ export default component$(
                 />
               ))}
             </div>
-            <ColumnLabels />
+            <ColumnLabels displaySide={state.displaySide} />
             <div className="mt-4 w-full">
               <ScoreBug
                 board={board}
