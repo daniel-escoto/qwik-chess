@@ -1,5 +1,5 @@
 import { Board } from "~/models/Board";
-import { PieceType, PieceColor } from "~/models/Piece";
+import { PieceType, PieceColor, Piece } from "~/models/Piece";
 import { Position, Tile } from "~/models/Tile";
 import { getColumnNumber, getColumnString } from "../Board";
 import { getVerifiedPiece } from "./Piece";
@@ -247,4 +247,46 @@ export const getPawnMoves = (
   }
 
   return filteredMoves;
+};
+
+// given a previous board, a start position, and an end position,
+// if an en passant occured, return the piece of the pawn that created the en passant
+// otherwise, return null
+export const getEnPassantPawn = (
+  board: Board,
+  enPassantTile: Tile
+): Piece | null => {
+  const row = enPassantTile.position.row;
+  const tiles = board.tiles.flat();
+
+  if (row === 6) {
+    const tile = tiles.find((tile) => {
+      return (
+        tile.position.row === 5 &&
+        enPassantTile.position.column === tile.position.column
+      );
+    });
+
+    if (!tile) {
+      return null;
+    }
+
+    return tile.piece;
+  }
+
+  if (row === 3) {
+    const tile = tiles.find((tile) => {
+      return (
+        tile.position.row === 4 && tile.position.column === tile.position.column
+      );
+    });
+
+    if (!tile) {
+      return null;
+    }
+
+    return tile.piece;
+  }
+
+  return null;
 };

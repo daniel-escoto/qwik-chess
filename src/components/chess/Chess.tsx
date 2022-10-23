@@ -45,7 +45,12 @@ export default component$(() => {
         board: newBoard,
         capturedPiece,
         enPassantTile,
-      } = movePiece(state.board, state.selectedTile.position, tile.position);
+      } = movePiece(
+        state.board,
+        state.selectedTile.position,
+        tile.position,
+        state.enPassantTile
+      );
 
       // change turn only if newBoard is different from old board
       if (newBoard !== state.board) {

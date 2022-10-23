@@ -1,6 +1,7 @@
 import { Tile, Position } from "~/models/Tile";
 import { Board } from "~/models/Board";
 import { getColumnNumber, getColumnString, getLegalMoves } from "./Board";
+import { Piece } from "~/models/Piece";
 
 // given two tiles, return true if they are the same tile
 export const isSameTile = (tile1: Tile, tile2: Tile): boolean => {
@@ -24,6 +25,21 @@ export const getTileAtPosition = (
   if (!tile) {
     return null;
   }
+  return tile;
+};
+
+// given a piece and a board, return the tile that the piece is on
+export const getTileOfPiece = (board: Board, piece: Piece): Tile | null => {
+  const tiles = board.tiles.flat();
+
+  const tile = tiles.find((tile) => {
+    return tile.piece && piece === tile.piece;
+  });
+
+  if (!tile) {
+    return null;
+  }
+
   return tile;
 };
 

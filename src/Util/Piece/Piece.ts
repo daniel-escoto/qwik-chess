@@ -81,7 +81,8 @@ export const getPiece = (board: Board, position: Position): Piece | null => {
 export const isValidMove = (
   board: Board,
   startingPosition: Position,
-  endingPosition: Position
+  endingPosition: Position,
+  enPassantTile: Tile | null = null
 ): boolean => {
   const piece = getPiece(board, startingPosition);
 
@@ -89,7 +90,12 @@ export const isValidMove = (
     return false;
   }
 
-  const moves = getPieceMoves(board, startingPosition);
+  const moves = getPieceMoves(
+    board,
+    startingPosition,
+    undefined,
+    enPassantTile
+  );
 
   return moves.some((move) => {
     return (

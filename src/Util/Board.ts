@@ -3,7 +3,8 @@ import { Piece, PieceColor, PieceType } from "~/models/Piece";
 import { Board, CheckStatus, BoardStatus } from "~/models/Board";
 import { isValidMove, getPiece, getPieceMoves } from "./Piece/Piece";
 import { isKingInCheck, isKingInCheckmate } from "./Piece/King";
-import { getTileAtPosition } from "./Tile";
+import { getTileAtPosition, getTileOfPiece } from "./Tile";
+import { getEnPassantPawn } from "./Piece/Pawn";
 
 // generate a board with the starting pieces in the correct positions
 // a - h are the columns, left to right
@@ -215,7 +216,8 @@ export const getColumnString = (column: number): string => {
 export const movePiece = (
   board: Board,
   start: Position,
-  end: Position
+  end: Position,
+  previousEnPassant: Tile | null = null
 ): {
   board: Board;
   capturedPiece: Piece | null;
@@ -227,14 +229,47 @@ export const movePiece = (
 
   const enPassantTile = getEnPassantTile(board, start, end);
 
-  if (piece && isValidMove(board, start, end)) {
-    const capturedPiece = getPiece(newBoard, end);
+  if (piece && isValidMove(board, start, end, previousEnPassant)) {
+    if (
+      previousEnPassant &&
+      end.column === previousEnPassant.position.column &&
+      end.row === previousEnPassant.position.row
+    ) {
+      const capturedPiece = previousEnPassant
+        ? getEnPassantPawn(newBoard, previousEnPassant)
+        : null;
 
-    newBoard.tiles[end.row - 1][getColumnNumber(end.column) - 1].piece = piece;
-    newBoard.tiles[start.row - 1][getColumnNumber(start.column) - 1].piece =
-      null;
+      const tileOfCapturedPiece = capturedPiece
+        ? getTileOfPiece(newBoard, capturedPiece)
+        : null;
 
-    return { board: newBoard, capturedPiece, enPassantTile };
+      newBoard.tiles[end.row - 1][getColumnNumber(end.column) - 1].piece =
+        piece;
+
+      newBoard.tiles[start.row - 1][getColumnNumber(start.column) - 1].piece =
+        null;
+
+      if (tileOfCapturedPiece) {
+        newBoard.tiles[tileOfCapturedPiece.position.row - 1][
+          getColumnNumber(tileOfCapturedPiece.position.column) - 1
+        ].piece = null;
+      }
+
+      return {
+        board: newBoard,
+        capturedPiece: capturedPiece,
+        enPassantTile,
+      };
+    } else {
+      const capturedPiece = getPiece(newBoard, end);
+
+      newBoard.tiles[end.row - 1][getColumnNumber(end.column) - 1].piece =
+        piece;
+      newBoard.tiles[start.row - 1][getColumnNumber(start.column) - 1].piece =
+        null;
+
+      return { board: newBoard, capturedPiece, enPassantTile };
+    }
   } else {
     return { board, capturedPiece: null, enPassantTile: null };
   }
